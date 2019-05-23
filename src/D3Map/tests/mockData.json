@@ -1,0 +1,52 @@
+{
+  "fakeRiding":{
+    "id":21349,
+    "name":"Fort McMurray-Lac La Biche",
+    "searchableName":"fort mcmurray lac la biche",
+    "candidateIds": [
+      104920,
+      104921,
+      104923,
+      104924,
+      105536
+    ],
+    "voteNumberTextual": "13&nbsp;892",
+    "closedPolls": 69,
+    "pollsTotal": 71, 
+    "status": "E",
+    "voteNumber": 13892,
+    "leadingPartyId": 3019
+  },
+  "fakeParty":[{
+    "chiefId": 0,
+    "voteNumberTextual": "294",
+    "acronym": "PC",
+    "color": "rgb(0,128,192)",
+    "priority": 99,
+    "aheadNumber": 0,
+    "name": "Parti progressiste-conservateur",
+    "status": "",
+    "voteNumber": 294,
+    "electedNumber": 0,
+    "votePercentTextual": "0,0&nbsp;%",
+    "id": 3019,
+    "votePercent": 0
+  }],
+  "fakeMapData":{
+    "height": 600,
+    "initialProjectionScale": 2.8,
+    "initialScalingConfigurations": null,
+    "mapUrl": "https://s.radio-canada.ca/e6n/topo_alberta-05-agnostic.json",
+    "translateScalingRatio": 2.6,
+    "width": 400,
+    "xCentering": -115.00307402547969,
+    "yCentering": 54.87202586080593,
+    "zoomFactor": 0.3,
+    "zoomMax": 100,
+    "mapConfigurations": [{
+      "lowerBoundary": 0,
+      "higherBoundary": 0,
+      "widthDifferential": 2
+    }]
+  }
+}

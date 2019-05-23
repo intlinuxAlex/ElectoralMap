@@ -1,0 +1,32 @@
+{
+  "name": "electoralmap",
+  "version": "1.0.0",
+  "description": "A package to render the RC  E6N Electoral Map",
+  "main": "./src/D3Map/index.js",
+  "dependencies": {
+    "babel": "^6.23.0",
+    "classnames": "^2.2.6",
+    "react": "^16.8.6",
+    "styled-components": "^4.2.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": "intlinuxAlex/ElectoralMap",
+  "keywords": [
+    "E6N",
+    "ElectR",
+    "Radio-Canada",
+    "Map",
+    "D3"
+  ],
+  "author": {
+    "name": "Alexandre Daigneault",
+    "email": "alexandre.daigneault@radio-canada.ca"
+  },
+  "bugs": {
+    "url": "https://github.com/intlinuxAlex/ElectoralMap/issues"
+  },
+  "homepage": "https://github.com/intlinuxAlex/ElectoralMap#readme"
+}
