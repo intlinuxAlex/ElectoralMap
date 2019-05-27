@@ -1,89 +1,99 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import styled, { css } from 'styled-components';
+const React = require('react');
+const Component = require('react');
+const style = require('styled-components');
+const { css } = require('styled-components');
 
-import { global } from 'lib/styled/global';
-
-const {
-  bp,
-  colorsPalette,
-  mediaQueries,
-} = global;
-
-const { mediaMax } = mediaQueries;
-const { colorsDx, colorsUi } = colorsPalette;
-
-const StyledSvg = styled.svg`
-  background-color: ${colorsDx.white};
-  display: block;
-  fill : ${colorsUi.lightgrey};
-  overflow: hidden;
-  position: absolute;
-  min-height: 300px;
-
-
-  ${mediaMax(bp.SM.max, `
-    max-height: 50vh;
-  `)}
-
-  path {
-    cursor: pointer;
-    stroke: white;
-    stroke-width: 0.5px;
-    -webkit-backface-visibility;
-  }
-
-  ${({ partyColors }) => {
-    if (partyColors) {
-      let styles = '';
-      partyColors.forEach((element) => {
-        styles += `${element} `;
-      });
-
-      return css`${styles}`;
-    }
-    return null;
-  }}
-
-  .flash-it {
-    animation-duration: 1666ms;
-    animation-fill-mode: both;
-    animation-iteration-count: 3;
-    animation-name: flash;
-    animation-play-state: running;
-    animation-timing-function: ease-in-out;
-    background-color: ${colorsUi.lightgrey};
-    opacity: .6;
-  }
-
-  @keyframes flash {
-    0% {opacity: .6;}
-    50% {opacity: 1;}
-    100% {opacity: .6;}
-  }
-
-  path:hover,
-  path.highlighted {
-      fill-opacity: .6;
-  }
-
-  .mobile & path:hover,
-  .mobile & path.highlighted,
-  .ios & path:hover,
-  .ios & path.highlighted,
-  .android & path:hover,
-  .android & path.highlighted {
-      fill-opacity: 1;
-  }
-`;
-
-const StyledCanvas = styled.canvas`
-  position: absolute;
-`;
+let StyledSvg = null;
+let StyledCanvas = null;
 
 const mapDOMId = 'maps_d3';
 
-class D3MapRenderer extends Component { // eslint-disable-line react/prefer-stateless-function
+class D3MapRendererModule extends React.Component { // eslint-disable-line react/prefer-stateless-function
+  constructor(props) {
+    super(props);
+    const {
+      global
+    } = this.props;
+
+    const {
+      bp,
+      colorsPalette,
+      mediaQueries,
+      styled,
+    } = global;
+
+    const { mediaMax } = mediaQueries;
+    const { colorsDx, colorsUi } = colorsPalette;
+
+    StyledSvg = styled.svg`
+    background-color: ${colorsDx.white};
+    display: block;
+    fill : ${colorsUi.lightgrey};
+    overflow: hidden;
+    position: absolute;
+    min-height: 300px;
+  
+  
+    ${mediaMax(bp.SM.max, `
+      max-height: 50vh;
+    `)}
+  
+    path {
+      cursor: pointer;
+      stroke: white;
+      stroke-width: 0.5px;
+      -webkit-backface-visibility;
+    }
+  
+    ${({ partyColors }) => {
+      if (partyColors) {
+        let styles = '';
+        partyColors.forEach((element) => {
+          styles += `${element} `;
+        });
+  
+        return css`${styles}`;
+      }
+      return null;
+    }}
+  
+    .flash-it {
+      animation-duration: 1666ms;
+      animation-fill-mode: both;
+      animation-iteration-count: 3;
+      animation-name: flash;
+      animation-play-state: running;
+      animation-timing-function: ease-in-out;
+      background-color: ${colorsUi.lightgrey};
+      opacity: .6;
+    }
+  
+    @keyframes flash {
+      0% {opacity: .6;}
+      50% {opacity: 1;}
+      100% {opacity: .6;}
+    }
+  
+    path:hover,
+    path.highlighted {
+        fill-opacity: .6;
+    }
+  
+    .mobile & path:hover,
+    .mobile & path.highlighted,
+    .ios & path:hover,
+    .ios & path.highlighted,
+    .android & path:hover,
+    .android & path.highlighted {
+        fill-opacity: 1;
+    }
+  `;
+
+  StyledCanvas = styled.canvas`
+    position: absolute;
+  `;
+  }
+  
   componentDidMount() {
     const {
       initializeMap,
@@ -94,9 +104,20 @@ class D3MapRenderer extends Component { // eslint-disable-line react/prefer-stat
 
   render() {
     const {
+      global,
       onMouseMove,
       partyColors,
     } = this.props;
+
+    const {
+      bp,
+      colorsPalette,
+      mediaQueries,
+      styled,
+    } = global;
+
+    const { mediaMax } = mediaQueries;
+    const { colorsDx, colorsUi } = colorsPalette;
 
     return (
       <>
@@ -120,10 +141,4 @@ class D3MapRenderer extends Component { // eslint-disable-line react/prefer-stat
   }
 }
 
-D3MapRenderer.propTypes = {
-  initializeMap: PropTypes.func.isRequired,
-  onMouseMove: PropTypes.func,
-  partyColors: PropTypes.array,
-};
-
-export default D3MapRenderer;
+module.exports = D3MapRendererModule;

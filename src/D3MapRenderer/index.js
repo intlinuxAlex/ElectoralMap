@@ -1,14 +1,14 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { e6nHardcodedRidingIdFix, E6N_PAGE_IDS } from 'containers/pages/E6N/constants';
-import D3MapRendererModule from 'components/modules/D3MapRenderer';
+const React = require('react');
+const Component = require('react');
+const D3MapRendererModule = require('../D3MapRendererModule'); // sortir
 
-class D3MapRenderer extends Component {
+class D3MapRenderer extends React.Component {
   componentDidUpdate(prevProps) {
     const {
       allowClick,
       focusRiding,
       currentRidingId,
+      e6nHardcodedRidingIdFix,
     } = this.props;
     let currentId = null;
     let feature = null;
@@ -38,6 +38,7 @@ class D3MapRenderer extends Component {
       allParties,
       currentRidingId,
       initializeMap,
+      global,
       onMouseMove,
       setCurrentRiding: setCurrentRidingAction,
     } = this.props;
@@ -58,19 +59,10 @@ class D3MapRenderer extends Component {
         initializeMap={initializeMap}
         onMouseMove={onMouseMove}
         partyColors={partyColors}
+        global={global}
       />
     );
   }
 }
 
-D3MapRenderer.propTypes = {
-  allParties: PropTypes.array,
-  allowClick: PropTypes.bool,
-  currentRidingId: PropTypes.number,
-  focusRiding: PropTypes.func,
-  initializeMap: PropTypes.func,
-  onMouseMove: PropTypes.func,
-  setCurrentRiding: PropTypes.func,
-};
-
-export default D3MapRenderer;
+module.exports = D3MapRenderer;

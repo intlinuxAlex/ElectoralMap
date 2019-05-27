@@ -2,16 +2,25 @@
   "name": "electoralmap",
   "version": "1.0.0",
   "description": "A package to render the RC  E6N Electoral Map",
-  "main": "./src/D3Map/index.js",
+  "main": "./dist/index.js",
   "dependencies": {
+    "@babel/core": "^7.4.5",
+    "@babel/preset-env": "^7.4.5",
+    "@babel/preset-react": "^7.0.0",
     "babel": "^6.23.0",
+    "babel-loader": "^8.0.6",
+    "babel-preset-react": "^6.24.1",
     "classnames": "^2.2.6",
     "react": "^16.8.6",
-    "styled-components": "^4.2.0"
+    "react-dom": "^16.8.6",
+    "styled-components": "^4.2.0",
+    "webpack": "^2.7.0"
   },
   "devDependencies": {},
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "webpack --watch",
+    "build": "webpack"
   },
   "repository": "intlinuxAlex/ElectoralMap",
   "keywords": [
