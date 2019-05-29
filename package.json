@@ -1,5 +1,5 @@
 {
-  "name": "electoralmap",
+  "name": "electoral-map",
   "version": "1.0.0",
   "description": "A package to render the RC  E6N Electoral Map",
   "main": "./dist/index.js",

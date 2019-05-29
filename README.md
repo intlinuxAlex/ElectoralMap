@@ -6,7 +6,7 @@ Built for a uninominal system, this module can support any of these types of ele
 ## Installation
 
 ```npm
-npm i --save electoralmap
+npm i --save electoral-map
 ```
 
 ## Parameters
