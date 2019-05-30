@@ -38,7 +38,7 @@ npm i --save electoral-map
 
     allowZoom: A boolean value dictating wether the viewer of the map can zoom/pan in or out.
 
-    ButtonV2: An object which forms the basis of a styled-component Button (used for resetting the zoom and pan level).
+    ZoomOutButton: An object which forms the basis of a styled-component Button (used for resetting the zoom and pan level).
 
     currentPan: An object indicating the amount of pixels on the x and y axis that differ from the original rendering of the map
         {
@@ -99,4 +99,4 @@ npm i --save electoral-map
 
     zoomLevel: A number that represents the current zoom level of the map. Default: 1.
 
-    d3SourceScript: A string containing the path to the bundled d3 library. Default: "/unit/static/e6n/bundle-d3-topojson.js"
+    d3SourceScript: A string containing the path to the bundled d3 library. Default: "https://ici.radio-canada.ca/unit/static/e6n/bundle-d3-topojson.js"

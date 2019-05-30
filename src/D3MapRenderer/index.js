@@ -1,6 +1,6 @@
 const React = require('react');
 const Component = require('react');
-const D3MapRendererModule = require('../D3MapRendererModule'); // sortir
+const D3MapRendererModule = require('../D3MapRendererModule'); 
 
 class D3MapRenderer extends React.Component {
   componentDidUpdate(prevProps) {
@@ -40,6 +40,7 @@ class D3MapRenderer extends React.Component {
       initializeMap,
       global,
       onMouseMove,
+      mapDOMContextId,
       setCurrentRiding: setCurrentRidingAction,
     } = this.props;
 
@@ -60,6 +61,7 @@ class D3MapRenderer extends React.Component {
         onMouseMove={onMouseMove}
         partyColors={partyColors}
         global={global}
+        mapDOMContextId={mapDOMContextId}
       />
     );
   }

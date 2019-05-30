@@ -6,13 +6,12 @@ const { css } = require('styled-components');
 let StyledSvg = null;
 let StyledCanvas = null;
 
-const mapDOMId = 'maps_d3';
-
-class D3MapRendererModule extends React.Component { // eslint-disable-line react/prefer-stateless-function
+class D3MapRendererModule extends React.Component {
   constructor(props) {
-    super(props);
+   super(props);
     const {
-      global
+      global,
+      mapDOMContextId,
     } = this.props;
 
     const {
@@ -95,17 +94,19 @@ class D3MapRendererModule extends React.Component { // eslint-disable-line react
   }
   
   componentDidMount() {
-    const {
-      initializeMap,
-    } = this.props;
-
-    initializeMap(mapDOMId);
+      const {
+        initializeMap,
+        mapDOMContextId,
+      } = this.props;
+    
+    initializeMap(mapDOMContextId);
   }
 
   render() {
     const {
       global,
       onMouseMove,
+      mapDOMContextId,
       partyColors,
     } = this.props;
 
@@ -127,7 +128,7 @@ class D3MapRendererModule extends React.Component { // eslint-disable-line react
         >
         </StyledCanvas>
         <StyledSvg
-          id={mapDOMId}
+          id={mapDOMContextId}
           onMouseMove={onMouseMove}
           partyColors={partyColors}
         >

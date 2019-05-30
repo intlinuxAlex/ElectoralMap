@@ -4,11 +4,9 @@ const Component = require('react');
 const classNames = require('classnames/dedupe');
 const D3MapRenderer = require('../D3MapRenderer');
 const D3MapZoomButton = require('../D3MapZoomButton');
-const loadScript = require('../lib/helpers/dynamicLibs');
 
-let StyledMap = null;
 
-class D3Map extends React.Component { // eslint-disable-line react/prefer-stateless-function
+class D3Map extends React.Component {
     constructor(props) {
       super(props);
   
@@ -40,7 +38,7 @@ class D3Map extends React.Component { // eslint-disable-line react/prefer-statel
         isRidingOpen
       } = this.props;
 
-      StyledMap = global.styled.div`
+      this.StyledMap = global.styled.div`
       flex-grow: 1;
       position: relative;
 
@@ -205,12 +203,13 @@ class D3Map extends React.Component { // eslint-disable-line react/prefer-statel
         setCurrentZoom: setCurrentZoomAction,
         setCurrentPan: setCurrentPanAction,
         mapData,
+        mapId,
+        mapDOMContextId,
         e6nHardcodedRidingIdFix,
         E6N_PAGE_IDS
       } = this.props;
   
-      const mapSearchSection = document.getElementById('map-only');
-
+      const mapSearchSection = document.getElementById(mapId);
       let relativeInitialScale = mapSearchSection.clientHeight * mapData.initialProjectionScale;
   
       if (mapData.initialScalingConfigurations) {
@@ -317,7 +316,7 @@ class D3Map extends React.Component { // eslint-disable-line react/prefer-statel
       const {
         allParties,
         allowClick,
-        ButtonV2,
+        baseId,
         currentPan,
         currentRidingId,
         e6nHardcodedRidingIdFix,
@@ -325,41 +324,49 @@ class D3Map extends React.Component { // eslint-disable-line react/prefer-statel
         forwardMapRef,
         global,
         isRidingOpen,
+        mapDOMContextId,
+        mapId,
         zoomLevel,
+        ZoomOutButton,
       } = this.props;
   
       if (!isReady) return (null);
 
-      return (
-        <StyledMap
-          aria-hidden
-          isRidingOpen={isRidingOpen}
-          ref={forwardMapRef}
-          id="map-only"
-        >
-          
-          <E6NToolTip
-            forwardTooltipRef={this.childTooltipRef}
-          />
-          <D3MapZoomButton
-            ButtonV2={ButtonV2}
-            onClick={this.zoomToInitialSize}
-            currentPan={currentPan}
-            zoomLevel={zoomLevel}
-            global={global}
-          />
-          <D3MapRenderer
-            allowClick={allowClick}
-            allParties={allParties}
-            currentRidingId={currentRidingId}
-            initializeMap={this.loadMaps}
-            onMouseMove={(event) => this.onMouseMove(event)}
-            focusRiding={this.focusOnRiding}
-            e6nHardcodedRidingIdFix={e6nHardcodedRidingIdFix}
-            global={global}
-          />
-        </StyledMap>
-      );
+      const StyledMap = this.StyledMap;
+      if (StyledMap) {
+        return (
+          <StyledMap
+            aria-hidden
+            isRidingOpen={isRidingOpen}
+            ref={forwardMapRef}
+            id={mapId} //RECOIT ELECTION TAG AVEC CONCATENATION MAP-ONLY. (UTILISER LODASH UNIQUE ID) (SENT BY CONTAINER)
+          >
+            
+            <E6NToolTip
+              forwardTooltipRef={this.childTooltipRef}
+            />
+            <D3MapZoomButton
+              ZoomOutButton={ZoomOutButton}
+              onClick={this.zoomToInitialSize}
+              currentPan={currentPan}
+              zoomLevel={zoomLevel}
+              global={global}
+            />
+            <D3MapRenderer
+              allowClick={allowClick}
+              allParties={allParties}
+              currentRidingId={currentRidingId}
+              initializeMap={this.loadMaps}
+              onMouseMove={(event) => this.onMouseMove(event)}
+              focusRiding={this.focusOnRiding}
+              e6nHardcodedRidingIdFix={e6nHardcodedRidingIdFix}
+              global={global}
+              mapDOMContextId={mapDOMContextId}
+            />
+          </StyledMap>
+        );
+      }
+      return <div/>
     }
   }
 

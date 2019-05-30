@@ -1,53 +1,64 @@
 const React = require('react');
 const Component = require('react');
 
-let StyledResetButton = null;
-
-const D3MapZoomButton = ({
-  ButtonV2,
-  currentPan,
-  onClick,
-  zoomLevel,
-  global,
-}) => {
-
-  const {
-    colorsPalette,
-    styled,
-  } = global;
-  
-  const { colorsDx } = colorsPalette;
-  
-  const thresholds = {
-    X: 50,
-    Y: 50,
-    Z: 1,
-  };
-  
-
-  StyledResetButton = styled(ButtonV2)`
-     bottom: 20px;
-     left: 20px;
-     position: absolute;
-     z-index: 10;
-  
-     .svg-icon {
-       fill: ${colorsDx.black}
-     }
-   `;
-
-  if (zoomLevel > thresholds.Z || (currentPan && (Math.abs(currentPan.transformX) > thresholds.X || Math.abs(currentPan.transformY) > thresholds.Y))) {
-    return (
-      <StyledResetButton
-        icon="svg-zoomout"
-        id="zoomContainer"
-        isIconFlag
-        onClick={onClick}
-        scope="secondary"
-        type="button"
-      />
-    );
-  }
-  return null;
+const thresholds = {
+  X: 50,
+  Y: 50,
+  Z: 1,
 };
+
+class D3MapZoomButton extends React.Component {
+
+  constructor(props) {
+    super(props);
+    this.StyledResetButton = null;
+  }
+
+  componentDidMount() {
+    const {
+      colorsPalette,
+      styled,
+    } = this.props.global;
+
+    const {
+      ZoomOutButton
+    } = this.props;
+
+    const { colorsDx } = colorsPalette;
+
+    this.StyledResetButton = styled(ZoomOutButton)`
+      bottom: 20px;
+      left: 20px;
+      position: absolute;
+      z-index: 10;
+  
+      .svg-icon {
+        fill: ${colorsDx.black}
+      }
+    `;
+  }
+
+  render() {
+    const {
+      ZoomOutButton,
+      currentPan,
+      onClick,
+      zoomLevel,
+      global,
+    } = this.props;
+    const StyledResetButton = this.StyledResetButton;
+    if (zoomLevel > thresholds.Z || (currentPan && (Math.abs(currentPan.transformX) > thresholds.X || Math.abs(currentPan.transformY) > thresholds.Y))) {
+      return (
+        <StyledResetButton
+          icon="svg-zoomout"
+          isIconFlag
+          onClick={onClick}
+          scope="secondary"
+          type="button"
+        />
+      );
+    }
+    return null;
+  }
+}
 module.exports = D3MapZoomButton;

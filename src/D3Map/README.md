@@ -49,8 +49,8 @@ import E6NToolTip from 'containers/modules/e6n/E6NToolTip';
 * `isRidingOpen` : Renvoit si la fiche d'une circonscription est présentement ouverte.
 * `isWidget` : Indique si la carte existe en tant que widget exporté (true) ou dans son contexte naturel de la page E6N (false).
 * `mapData` : Objet contenant les configurations requises pour la carte (centrage, scaling initial selon les breakpoints, url du topojson, max zoom levels).
-* `setCurrentRiding` : Fonction qui envoit au store le id correspondant à la circonscription reliée à un polygone quelconque sur la carte.
-* `setCurrentRidingTooltip` : Fonction qui permet au store d'afficher le nom de la circonscription en tooltip sous le curseur.
+* `setCurrentRiding` : Fonction qui est déclenchée au clic d'une circonscription/polygone de la carte. Dans le contexte de la page E6N, la fonction envoit au store le id correspondant à la circonscription reliée à un polygone quelconque sur la carte.
+* `setCurrentRidingTooltip` : Fonction qui est déclenchée au survol d'une circonscription/polygone de la carte.  Dans le contexte de la page E6N, la fonction permet au store d'afficher le nom de la circonscription en tooltip sous le curseur.
 * `setCurrentPan` : Garde en mémoire l'objet currentPan actuel: gère la présence du bouton pour reset le zoom.
 * `zoomLevel` : Niveau de zoom actuel (sans coordonnées x et y de currentPan)
  
