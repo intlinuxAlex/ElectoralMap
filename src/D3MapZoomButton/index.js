@@ -16,13 +16,19 @@ class D3MapZoomButton extends React.Component {
 
   componentDidMount() {
     const {
-      colorsPalette,
-      styled,
-    } = this.props.global;
+      ZoomOutButton,
+      styledComponents,
+      stylingConstants,
+    } = this.props;
 
     const {
-      ZoomOutButton
-    } = this.props;
+      styled,
+      css,
+    } = styledComponents; 
+
+    const {
+      colorsPalette
+    } = stylingConstants;
 
     const { colorsDx } = colorsPalette;
 
@@ -43,11 +49,11 @@ class D3MapZoomButton extends React.Component {
       ZoomOutButton,
       currentPan,
       onClick,
-      zoomLevel,
-      global,
+      currentZoom,
     } = this.props;
     const StyledResetButton = this.StyledResetButton;
-    if (zoomLevel > thresholds.Z || (currentPan && (Math.abs(currentPan.transformX) > thresholds.X || Math.abs(currentPan.transformY) > thresholds.Y))) {
+
+    if (currentZoom > thresholds.Z || (currentPan && (Math.abs(currentPan.transformX) > thresholds.X || Math.abs(currentPan.transformY) > thresholds.Y))) {
       return (
         <StyledResetButton
           icon="svg-zoomout"

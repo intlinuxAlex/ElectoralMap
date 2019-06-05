@@ -40,12 +40,6 @@ npm i --save electoral-map
 
     ZoomOutButton: An object which forms the basis of a styled-component Button (used for resetting the zoom and pan level).
 
-    currentPan: An object indicating the amount of pixels on the x and y axis that differ from the original rendering of the map
-        {
-            transformX: 0
-            transformY: 0
-        } 
-
     currentRidingId: An integer representing the current active riding. -1 if no riding is active.
 
     e6nHardcodedRidingIdFix: An integer to facilitate tests between different GES datasets. Since array indices start at 0 but GES data can start at any index,         this is used to easily calibrate your indices with those of the GES.
@@ -61,7 +55,7 @@ npm i --save electoral-map
 
     forwardMapRef: A function ref propagated to link the D3Map to its parent container 
 
-    global: An object containing functions and other objects extracted from the 'styled-components' npm library. 
+    styledComponents: An object containing functions and other objects extracted from the 'styled-components' npm library. 
 
     isRidingOpen: A boolean representing wether a riding is currently open. 
 
@@ -83,20 +77,22 @@ npm i --save electoral-map
             width: 400 (Default width)
             xCentering: -63.21374728206884  (Longitude at which the projection is centered)
             yCentering: 46.509999863593556  (Lattitude at which the projection is centered)
+            rotationConfigurations: {
+                x: 0,
+                y: 0,
+                z: 0,
+            }
+            projectionModel: "geoTransverseMercator"
             zoomFactor: 0.3 (Minimal zoom level: used on riding click)
             zoomMax: 100 (Maximal zoom level: used on riding click)
         }
 
+    mapDOMContextId: Id of the Map container in E6N page.
+
+    mapId: Id of the map itself.
+    
     setCurrentRiding: An action/reducer which sends the current riding id into the Redux Store.
 
     setCurrentRidingTooltip: An action/reducer which sends the current riding name into the Redux Store.
-
-    setCurrentPan: An action/reducer which sends the currentPan object into the Redux Store.
-
-    setCurrentZoom: An action/reducer which sends the current zoomLevel into the Redux Store.
-
-    StyledMap: A styled object that contains the map.
-
-    zoomLevel: A number that represents the current zoom level of the map. Default: 1.
 
     d3SourceScript: A string containing the path to the bundled d3 library. Default: "https://ici.radio-canada.ca/unit/static/e6n/bundle-d3-topojson.js"

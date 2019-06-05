@@ -1,7 +1,5 @@
 const React = require('react');
 const Component = require('react');
-const style = require('styled-components');
-const { css } = require('styled-components');
 
 let StyledSvg = null;
 let StyledCanvas = null;
@@ -10,17 +8,23 @@ class D3MapRendererModule extends React.Component {
   constructor(props) {
    super(props);
     const {
-      global,
+      styledComponents,
       mapDOMContextId,
+      stylingConstants,
     } = this.props;
 
     const {
-      bp,
+      BREAKPOINTS,
       colorsPalette,
       mediaQueries,
-      styled,
-    } = global;
+    } = stylingConstants;
 
+    const {
+      styled,
+      css,
+    } = styledComponents;
+
+    const bp = BREAKPOINTS;
     const { mediaMax } = mediaQueries;
     const { colorsDx, colorsUi } = colorsPalette;
 
@@ -38,7 +42,7 @@ class D3MapRendererModule extends React.Component {
     `)}
   
     path {
-      cursor: pointer;
+      cursor: pointer !important;
       stroke: white;
       stroke-width: 0.5px;
       -webkit-backface-visibility;
@@ -91,6 +95,7 @@ class D3MapRendererModule extends React.Component {
   StyledCanvas = styled.canvas`
     position: absolute;
   `;
+  
   }
   
   componentDidMount() {
@@ -108,14 +113,14 @@ class D3MapRendererModule extends React.Component {
       onMouseMove,
       mapDOMContextId,
       partyColors,
+      stylingConstants
     } = this.props;
 
     const {
       bp,
       colorsPalette,
       mediaQueries,
-      styled,
-    } = global;
+    } = stylingConstants;
 
     const { mediaMax } = mediaQueries;
     const { colorsDx, colorsUi } = colorsPalette;

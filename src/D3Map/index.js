@@ -1,10 +1,9 @@
 const React = require('react');
 const Component = require('react');
-
+const stylingConstants = require('../lib/styled/stylingpackage');
 const classNames = require('classnames/dedupe');
 const D3MapRenderer = require('../D3MapRenderer');
 const D3MapZoomButton = require('../D3MapZoomButton');
-
 
 class D3Map extends React.Component {
     constructor(props) {
@@ -12,6 +11,11 @@ class D3Map extends React.Component {
   
       this.state = {
         isReady: false,
+        currentPan: {
+          transformX: 0,
+          transformY: 0,
+        },
+        currentZoom: 1,
       };
 
       this.minimalZoom = 1;
@@ -34,20 +38,33 @@ class D3Map extends React.Component {
       this.childTooltipRef = React.createRef();
 
       const {
-        global,
-        isRidingOpen
+        isRidingOpen,
+        styledComponents,
       } = this.props;
 
-      this.StyledMap = global.styled.div`
+      const {
+        styled,
+      } = styledComponents;
+
+      const {
+        BREAKPOINTS,
+        mediaQueries,
+      } = stylingConstants;
+
+
+      const bp = BREAKPOINTS;
+      const { mediaMax } = mediaQueries; 
+
+      this.StyledMap = styled.div` 
       flex-grow: 1;
       position: relative;
 
-      ${global.mediaQueries.mediaMax(global.bp.SM.max, `
+      ${mediaQueries.mediaMax(bp.SM.max, `
         height: 45vh;
       `)}
 
       ${({ isRidingOpen }) => (isRidingOpen ? `
-        ${global.mediaQueries.mediaMax(global.bp.SM.max, `
+        ${mediaQueries.mediaMax(bp.SM.max, `
           background-image:  linear-gradient(rgba(0, 0, 0, 0) 75%, rgba(0, 0, 0, 0.04) 100%);
         `)}
       ` : '')}
@@ -194,14 +211,12 @@ class D3Map extends React.Component {
         E6N_PAGE_IDS
       } = this.props;
       this.svg.transition().duration(750).call(this.zoomTransform, window.d3.zoomIdentity);
-      setCurrentRidingThroughMap(-1, E6N_PAGE_IDS.lists);
+      setCurrentRidingThroughMap(-1, (E6N_PAGE_IDS && E6N_PAGE_IDS.lists ? E6N_PAGE_IDS.lists: null));
     }
   
     loadMaps(mapDOMId) {
       const {
         setCurrentRiding: setCurrentRidingThroughMap,
-        setCurrentZoom: setCurrentZoomAction,
-        setCurrentPan: setCurrentPanAction,
         mapData,
         mapId,
         mapDOMContextId,
@@ -223,9 +238,18 @@ class D3Map extends React.Component {
         }
       }
   
+      const { rotationConfigurations } = mapData;
+      const rotations = {
+        x: rotationConfigurations ? rotationConfigurations.x : 0,
+        y: rotationConfigurations ? rotationConfigurations.y : 0,
+        z: rotationConfigurations ? rotationConfigurations.z : 0,
+      };
+      const projectionModel = mapData.projectionModel ? mapData.projectionModel : 'geoMercator';
+  
       // Map projection
-      this.projection = window.d3.geoMercator()
+      this.projection = window.d3[projectionModel]()
         .scale(relativeInitialScale)
+        .rotate([rotations.x, rotations.y, rotations.z])
         .center([mapData.xCentering, mapData.yCentering]) // projection center
         .translate([mapSearchSection.clientWidth / 2, mapSearchSection.clientHeight / 2]); // translate to center the map in view
   
@@ -245,10 +269,12 @@ class D3Map extends React.Component {
       const zoomEnd = () => {
         features
           .selectAll('path').style('stroke-width', `${Math.max(0.01, 1 / (window.d3.event.transform.k * 2))}px`);
-        setCurrentZoomAction(window.d3.event.transform.k);
-        setCurrentPanAction({
-          transformX: window.d3.event.transform.x,
-          transformY: window.d3.event.transform.y,
+        this.setState({
+          currentPan:{
+            transformX: window.d3.event.transform.x,
+            transformY: window.d3.event.transform.y
+          },
+          currentZoom: window.d3.event.transform.k
         });
       };
   
@@ -299,7 +325,7 @@ class D3Map extends React.Component {
           .attr('d', this.path)
           .attr('class', assignRidingClass)
           .attr('id', (data) => data.properties.EDNumber20)
-          .on('click', (polygon) => { setCurrentRidingThroughMap(polygon.properties.EDNumber20 + e6nHardcodedRidingIdFix, E6N_PAGE_IDS.lists); })
+          .on('click', (polygon) => { setCurrentRidingThroughMap(polygon.properties.EDNumber20 + e6nHardcodedRidingIdFix, (E6N_PAGE_IDS && E6N_PAGE_IDS.lists ? E6N_PAGE_IDS.lists: null)); })
           .on('mouseover', handleMouseOver)
           .on('mouseout', handleMouseOut);
   
@@ -317,29 +343,29 @@ class D3Map extends React.Component {
         allParties,
         allowClick,
         baseId,
-        currentPan,
         currentRidingId,
         e6nHardcodedRidingIdFix,
+        E6N_PAGE_IDS,
         E6NToolTip,
         forwardMapRef,
-        global,
         isRidingOpen,
         mapDOMContextId,
         mapId,
-        zoomLevel,
+        styledComponents,
         ZoomOutButton,
       } = this.props;
   
       if (!isReady) return (null);
 
       const StyledMap = this.StyledMap;
+
       if (StyledMap) {
         return (
           <StyledMap
             aria-hidden
             isRidingOpen={isRidingOpen}
             ref={forwardMapRef}
-            id={mapId} //RECOIT ELECTION TAG AVEC CONCATENATION MAP-ONLY. (UTILISER LODASH UNIQUE ID) (SENT BY CONTAINER)
+            id={mapId}
           >
             
             <E6NToolTip
@@ -348,9 +374,10 @@ class D3Map extends React.Component {
             <D3MapZoomButton
               ZoomOutButton={ZoomOutButton}
               onClick={this.zoomToInitialSize}
-              currentPan={currentPan}
-              zoomLevel={zoomLevel}
-              global={global}
+              currentPan={this.state.currentPan}
+              currentZoom={this.state.currentZoom}
+              styledComponents={styledComponents}
+              stylingConstants={stylingConstants}
             />
             <D3MapRenderer
               allowClick={allowClick}
@@ -360,8 +387,10 @@ class D3Map extends React.Component {
               onMouseMove={(event) => this.onMouseMove(event)}
               focusRiding={this.focusOnRiding}
               e6nHardcodedRidingIdFix={e6nHardcodedRidingIdFix}
-              global={global}
+              E6N_PAGE_IDS={E6N_PAGE_IDS}
+              styledComponents={styledComponents}
               mapDOMContextId={mapDOMContextId}
+              stylingConstants={stylingConstants}
             />
           </StyledMap>
         );

@@ -38,10 +38,12 @@ class D3MapRenderer extends React.Component {
       allParties,
       currentRidingId,
       initializeMap,
-      global,
+      stylingConstants,
       onMouseMove,
       mapDOMContextId,
       setCurrentRiding: setCurrentRidingAction,
+      styledComponents,
+      E6N_PAGE_IDS
     } = this.props;
 
     const partyColors = [];
@@ -55,12 +57,13 @@ class D3MapRenderer extends React.Component {
 
     return (
       <D3MapRendererModule
-        closePopup={() => setCurrentRidingAction(-1, E6N_PAGE_IDS.lists)}
+        closePopup={() => setCurrentRidingAction(-1, (E6N_PAGE_IDS && E6N_PAGE_IDS.lists ? E6N_PAGE_IDS.lists: null))}
         currentRidingId={currentRidingId}
         initializeMap={initializeMap}
         onMouseMove={onMouseMove}
         partyColors={partyColors}
-        global={global}
+        styledComponents={styledComponents}
+        stylingConstants={stylingConstants}
         mapDOMContextId={mapDOMContextId}
       />
     );
