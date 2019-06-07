@@ -37,6 +37,7 @@ class D3MapRenderer extends React.Component {
     const {
       allParties,
       currentRidingId,
+      electionId,
       initializeMap,
       stylingConstants,
       onMouseMove,
@@ -59,6 +60,7 @@ class D3MapRenderer extends React.Component {
       <D3MapRendererModule
         closePopup={() => setCurrentRidingAction(-1, (E6N_PAGE_IDS && E6N_PAGE_IDS.lists ? E6N_PAGE_IDS.lists: null))}
         currentRidingId={currentRidingId}
+        electionId={electionId}
         initializeMap={initializeMap}
         onMouseMove={onMouseMove}
         partyColors={partyColors}
