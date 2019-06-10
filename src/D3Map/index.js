@@ -34,6 +34,7 @@ class D3Map extends React.Component {
       this.zoomEnd = this.zoomEnd.bind(this);
       this.zoomToInitialSize = this.zoomToInitialSize.bind(this);
       this.loadMaps = this.loadMaps.bind(this);
+      this.GetEditData = this.GetEditData.bind(this);
   
       this.childTooltipRef = React.createRef();
 
@@ -75,6 +76,16 @@ class D3Map extends React.Component {
         window.D3ElectoralMap = window.D3ElectoralMap || {};
         window.D3ElectoralMap[props.mapId] = this;
       }
+    }
+
+    GetEditData() {
+      if (!this.props.isEditMode) return null;
+
+      return {
+        initialProjectionScale: this.state.currentZoom * this.props.mapData.initialProjectionScale,
+        xCentering: this.state.currentPan.coordinatesTransformX,
+        yCentering: this.state.currentPan.coordinatesTransformY,
+      };
     }
   
     componentDidMount() {
@@ -224,7 +235,7 @@ class D3Map extends React.Component {
     }
 
     zoomEnd() {
-      const { allowZoom } = this.props;
+      const { allowZoom, mapData } = this.props;
       
       if (!allowZoom) {
         window.d3.event.transform.x = 0;
@@ -234,8 +245,15 @@ class D3Map extends React.Component {
 
       this.featuresGlobal.selectAll('path').style('stroke-width', `${Math.max(0.01, 1 / (window.d3.event.transform.k * 2))}px`);
       
+      // Transformer ça avec la fonction dans Slack
+      const coordinates = this.projection.invert([window.d3.event.transform.x, window.d3.event.transform.y]);
+      const xCoordinate = coordinates[0].toFixed(8);
+      const yCoordinate = coordinates[1].toFixed(8);
+
       this.setState({
         currentPan:{
+          coordinatesTransformX: xCoordinate ? parseFloat(xCoordinate) : mapData.xCentering,
+          coordinatesTransformY: xCoordinate ? parseFloat(yCoordinate) : mapData.yCentering,
           transformX: window.d3.event.transform.x,
           transformY: window.d3.event.transform.y
         },
@@ -246,6 +264,8 @@ class D3Map extends React.Component {
     loadMaps(mapDOMId) {
       const {
         setCurrentRiding: setCurrentRidingThroughMap,
+        isEditMode,
+        isWidget,
         mapData,
         mapId,
         e6nHardcodedRidingIdFix,
@@ -255,7 +275,7 @@ class D3Map extends React.Component {
       const mapSearchSection = document.getElementById(mapId);
       let relativeInitialScale = mapSearchSection.clientHeight * mapData.initialProjectionScale;
   
-      if (mapData.initialScalingConfigurations) {
+      if ((!isWidget && !isEditMode) && mapData.initialScalingConfigurations) {
         for (let m = 0; m < mapData.initialScalingConfigurations.length; m += 1) {
           if ((mapData.initialScalingConfigurations[m].lowerBoundary === 0 || window.innerWidth >= mapData.initialScalingConfigurations[m].lowerBoundary)
           && (mapData.initialScalingConfigurations[m].higherBoundary === 0 || window.innerWidth < mapData.initialScalingConfigurations[m].higherBoundary)) {

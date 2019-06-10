@@ -958,6 +958,7 @@ function (_React$Component) {
     _this.zoomEnd = _this.zoomEnd.bind(_assertThisInitialized(_this));
     _this.zoomToInitialSize = _this.zoomToInitialSize.bind(_assertThisInitialized(_this));
     _this.loadMaps = _this.loadMaps.bind(_assertThisInitialized(_this));
+    _this.GetEditData = _this.GetEditData.bind(_assertThisInitialized(_this));
     _this.childTooltipRef = React.createRef();
     var _this$props = _this.props,
         isRidingOpen = _this$props.isRidingOpen,
@@ -981,6 +982,16 @@ function (_React$Component) {
   }
 
   _createClass(D3Map, [{
+    key: "GetEditData",
+    value: function GetEditData() {
+      if (!this.props.isEditMode) return null;
+      return {
+        initialProjectionScale: this.state.currentZoom * this.props.mapData.initialProjectionScale,
+        xCentering: this.state.currentPan.coordinatesTransformX,
+        yCentering: this.state.currentPan.coordinatesTransformY
+      };
+    }
+  }, {
     key: "componentDidMount",
     value: function componentDidMount() {
       var _this2 = this;
@@ -1149,7 +1160,9 @@ function (_React$Component) {
   }, {
     key: "zoomEnd",
     value: function zoomEnd() {
-      var allowZoom = this.props.allowZoom;
+      var _this$props4 = this.props,
+          allowZoom = _this$props4.allowZoom,
+          mapData = _this$props4.mapData;
 
       if (!allowZoom) {
         window.d3.event.transform.x = 0;
@@ -1157,9 +1170,15 @@ function (_React$Component) {
         window.d3.event.transform.k = 1;
       }
 
-      this.featuresGlobal.selectAll('path').style('stroke-width', "".concat(Math.max(0.01, 1 / (window.d3.event.transform.k * 2)), "px"));
+      this.featuresGlobal.selectAll('path').style('stroke-width', "".concat(Math.max(0.01, 1 / (window.d3.event.transform.k * 2)), "px")); // Transformer ça avec la fonction dans Slack
+
+      var coordinates = this.projection.invert([window.d3.event.transform.x, window.d3.event.transform.y]);
+      var xCoordinate = coordinates[0].toFixed(8);
+      var yCoordinate = coordinates[1].toFixed(8);
       this.setState({
         currentPan: {
+          coordinatesTransformX: xCoordinate ? parseFloat(xCoordinate) : mapData.xCentering,
+          coordinatesTransformY: xCoordinate ? parseFloat(yCoordinate) : mapData.yCentering,
           transformX: window.d3.event.transform.x,
           transformY: window.d3.event.transform.y
         },
@@ -1171,16 +1190,18 @@ function (_React$Component) {
     value: function loadMaps(mapDOMId) {
       var _this3 = this;
 
-      var _this$props4 = this.props,
-          setCurrentRidingThroughMap = _this$props4.setCurrentRiding,
-          mapData = _this$props4.mapData,
-          mapId = _this$props4.mapId,
-          e6nHardcodedRidingIdFix = _this$props4.e6nHardcodedRidingIdFix,
-          E6N_PAGE_IDS = _this$props4.E6N_PAGE_IDS;
+      var _this$props5 = this.props,
+          setCurrentRidingThroughMap = _this$props5.setCurrentRiding,
+          isEditMode = _this$props5.isEditMode,
+          isWidget = _this$props5.isWidget,
+          mapData = _this$props5.mapData,
+          mapId = _this$props5.mapId,
+          e6nHardcodedRidingIdFix = _this$props5.e6nHardcodedRidingIdFix,
+          E6N_PAGE_IDS = _this$props5.E6N_PAGE_IDS;
       var mapSearchSection = document.getElementById(mapId);
       var relativeInitialScale = mapSearchSection.clientHeight * mapData.initialProjectionScale;
 
-      if (mapData.initialScalingConfigurations) {
+      if (!isWidget && !isEditMode && mapData.initialScalingConfigurations) {
         for (var m = 0; m < mapData.initialScalingConfigurations.length; m += 1) {
           if ((mapData.initialScalingConfigurations[m].lowerBoundary === 0 || window.innerWidth >= mapData.initialScalingConfigurations[m].lowerBoundary) && (mapData.initialScalingConfigurations[m].higherBoundary === 0 || window.innerWidth < mapData.initialScalingConfigurations[m].higherBoundary)) {
             var baseMeasure = mapData.initialScalingConfigurations[m].shouldUseHeight ? mapSearchSection.clientHeight : mapSearchSection.clientWidth;
@@ -1268,20 +1289,20 @@ function (_React$Component) {
       var _this4 = this;
 
       var isReady = this.state.isReady;
-      var _this$props5 = this.props,
-          allParties = _this$props5.allParties,
-          allowClick = _this$props5.allowClick,
-          currentRidingId = _this$props5.currentRidingId,
-          electionId = _this$props5.electionId,
-          e6nHardcodedRidingIdFix = _this$props5.e6nHardcodedRidingIdFix,
-          E6N_PAGE_IDS = _this$props5.E6N_PAGE_IDS,
-          E6NToolTip = _this$props5.E6NToolTip,
-          forwardMapRef = _this$props5.forwardMapRef,
-          isRidingOpen = _this$props5.isRidingOpen,
-          mapDOMContextId = _this$props5.mapDOMContextId,
-          mapId = _this$props5.mapId,
-          styledComponents = _this$props5.styledComponents,
-          ZoomOutButton = _this$props5.ZoomOutButton;
+      var _this$props6 = this.props,
+          allParties = _this$props6.allParties,
+          allowClick = _this$props6.allowClick,
+          currentRidingId = _this$props6.currentRidingId,
+          electionId = _this$props6.electionId,
+          e6nHardcodedRidingIdFix = _this$props6.e6nHardcodedRidingIdFix,
+          E6N_PAGE_IDS = _this$props6.E6N_PAGE_IDS,
+          E6NToolTip = _this$props6.E6NToolTip,
+          forwardMapRef = _this$props6.forwardMapRef,
+          isRidingOpen = _this$props6.isRidingOpen,
+          mapDOMContextId = _this$props6.mapDOMContextId,
+          mapId = _this$props6.mapId,
+          styledComponents = _this$props6.styledComponents,
+          ZoomOutButton = _this$props6.ZoomOutButton;
       if (!isReady) return null;
       var StyledMap = this.StyledMap;
 
