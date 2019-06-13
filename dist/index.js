@@ -445,6 +445,7 @@ function (_React$Component) {
       var _this$props2 = this.props,
           allParties = _this$props2.allParties,
           currentRidingId = _this$props2.currentRidingId,
+          electionId = _this$props2.electionId,
           initializeMap = _this$props2.initializeMap,
           stylingConstants = _this$props2.stylingConstants,
           onMouseMove = _this$props2.onMouseMove,
@@ -468,6 +469,7 @@ function (_React$Component) {
           return setCurrentRidingAction(-1, E6N_PAGE_IDS && E6N_PAGE_IDS.lists ? E6N_PAGE_IDS.lists : null);
         },
         currentRidingId: currentRidingId,
+        electionId: electionId,
         initializeMap: initializeMap,
         onMouseMove: onMouseMove,
         partyColors: partyColors,
@@ -794,7 +796,6 @@ function (_React$Component) {
     _this = _possibleConstructorReturn(this, _getPrototypeOf(D3MapRendererModule).call(this, props));
     var _this$props = _this.props,
         styledComponents = _this$props.styledComponents,
-        mapDOMContextId = _this$props.mapDOMContextId,
         stylingConstants = _this$props.stylingConstants;
     var BREAKPOINTS = stylingConstants.BREAKPOINTS,
         colorsPalette = stylingConstants.colorsPalette,
@@ -831,24 +832,30 @@ function (_React$Component) {
       initializeMap(mapDOMContextId);
     }
   }, {
+    key: "componentDidUpdate",
+    value: function componentDidUpdate(prevProps) {
+      var _this$props3 = this.props,
+          electionId = _this$props3.electionId,
+          initializeMap = _this$props3.initializeMap,
+          mapDOMContextId = _this$props3.mapDOMContextId;
+
+      if (prevProps.electionId !== electionId) {
+        initializeMap(mapDOMContextId);
+      }
+    }
+  }, {
     key: "render",
     value: function render() {
-      var _this$props3 = this.props,
-          global = _this$props3.global,
-          onMouseMove = _this$props3.onMouseMove,
-          mapDOMContextId = _this$props3.mapDOMContextId,
-          partyColors = _this$props3.partyColors,
-          stylingConstants = _this$props3.stylingConstants;
-      var bp = stylingConstants.bp,
-          colorsPalette = stylingConstants.colorsPalette,
-          mediaQueries = stylingConstants.mediaQueries;
-      var mediaMax = mediaQueries.mediaMax;
-      var colorsDx = colorsPalette.colorsDx,
-          colorsUi = colorsPalette.colorsUi;
+      var _this$props4 = this.props,
+          electionId = _this$props4.electionId,
+          onMouseMove = _this$props4.onMouseMove,
+          mapDOMContextId = _this$props4.mapDOMContextId,
+          partyColors = _this$props4.partyColors;
       return React.createElement(React.Fragment, null, React.createElement(StyledCanvas, {
         height: "4",
         width: "3"
       }), React.createElement(StyledSvg, {
+        key: "".concat(mapDOMContextId, "-").concat(electionId),
         id: mapDOMContextId,
         onMouseMove: onMouseMove,
         partyColors: partyColors
@@ -947,8 +954,8 @@ function (_React$Component) {
     _this.onMouseMove = _this.onMouseMove.bind(_assertThisInitialized(_this));
     _this.fillRidingsWithLeadingPartyColor = _this.fillRidingsWithLeadingPartyColor.bind(_assertThisInitialized(_this));
     _this.focusOnRiding = _this.focusOnRiding.bind(_assertThisInitialized(_this));
-    _this.loadMaps = _this.loadMaps.bind(_assertThisInitialized(_this));
     _this.zoomed = _this.zoomed.bind(_assertThisInitialized(_this));
+    _this.zoomEnd = _this.zoomEnd.bind(_assertThisInitialized(_this));
     _this.zoomToInitialSize = _this.zoomToInitialSize.bind(_assertThisInitialized(_this));
     _this.loadMaps = _this.loadMaps.bind(_assertThisInitialized(_this));
     _this.childTooltipRef = React.createRef();
@@ -963,7 +970,13 @@ function (_React$Component) {
     _this.StyledMap = styled.div(_templateObject(), mediaQueries.mediaMax(bp.SM.max, "\n        height: 45vh;\n      "), function (_ref) {
       var isRidingOpen = _ref.isRidingOpen;
       return isRidingOpen ? "\n        ".concat(mediaQueries.mediaMax(bp.SM.max, "\n          background-image:  linear-gradient(rgba(0, 0, 0, 0) 75%, rgba(0, 0, 0, 0.04) 100%);\n        "), "\n      ") : '';
-    });
+    }); // TODO: Ajouter le reste du EditMode (les fonctions qui me permettent de get X et Y, ...)
+
+    if (props.isEditMode) {
+      window.D3ElectoralMap = window.D3ElectoralMap || {};
+      window.D3ElectoralMap[props.mapId] = _assertThisInitialized(_this);
+    }
+
     return _this;
   }
 
@@ -1128,7 +1141,30 @@ function (_React$Component) {
           setCurrentRidingThroughMap = _this$props3.setCurrentRiding,
           E6N_PAGE_IDS = _this$props3.E6N_PAGE_IDS;
       this.svg.transition().duration(750).call(this.zoomTransform, window.d3.zoomIdentity);
-      setCurrentRidingThroughMap(-1, E6N_PAGE_IDS && E6N_PAGE_IDS.lists ? E6N_PAGE_IDS.lists : null);
+
+      if (setCurrentRidingThroughMap) {
+        setCurrentRidingThroughMap(-1, E6N_PAGE_IDS && E6N_PAGE_IDS.lists ? E6N_PAGE_IDS.lists : null);
+      }
+    }
+  }, {
+    key: "zoomEnd",
+    value: function zoomEnd() {
+      var allowZoom = this.props.allowZoom;
+
+      if (!allowZoom) {
+        window.d3.event.transform.x = 0;
+        window.d3.event.transform.y = 0;
+        window.d3.event.transform.k = 1;
+      }
+
+      this.featuresGlobal.selectAll('path').style('stroke-width', "".concat(Math.max(0.01, 1 / (window.d3.event.transform.k * 2)), "px"));
+      this.setState({
+        currentPan: {
+          transformX: window.d3.event.transform.x,
+          transformY: window.d3.event.transform.y
+        },
+        currentZoom: window.d3.event.transform.k
+      });
     }
   }, {
     key: "loadMaps",
@@ -1139,7 +1175,6 @@ function (_React$Component) {
           setCurrentRidingThroughMap = _this$props4.setCurrentRiding,
           mapData = _this$props4.mapData,
           mapId = _this$props4.mapId,
-          mapDOMContextId = _this$props4.mapDOMContextId,
           e6nHardcodedRidingIdFix = _this$props4.e6nHardcodedRidingIdFix,
           E6N_PAGE_IDS = _this$props4.E6N_PAGE_IDS;
       var mapSearchSection = document.getElementById(mapId);
@@ -1171,23 +1206,10 @@ function (_React$Component) {
 
       this.svg = window.d3.select("#".concat(mapDOMId)).attr('width', '100%').attr('height', '100%'); // Group for the map features
 
-      var features = this.svg.append('g').attr('class', 'features');
-
-      var zoomEnd = function zoomEnd() {
-        features.selectAll('path').style('stroke-width', "".concat(Math.max(0.01, 1 / (window.d3.event.transform.k * 2)), "px"));
-
-        _this3.setState({
-          currentPan: {
-            transformX: window.d3.event.transform.x,
-            transformY: window.d3.event.transform.y
-          },
-          currentZoom: window.d3.event.transform.k
-        });
-      }; // Create zoom/pan listener
+      this.featuresGlobal = this.svg.append('g').attr('class', 'features'); // Create zoom/pan listener
       // Change [1,Infinity] to adjust the min/max zoom scale
 
-
-      this.zoom = window.d3.zoom().scaleExtent([this.minimalZoom, mapData.zoomMax]).on('end', zoomEnd).on('zoom', this.zoomed);
+      this.zoom = window.d3.zoom().scaleExtent([this.minimalZoom, mapData.zoomMax]).on('end', this.zoomEnd).on('zoom', this.zoomed);
       this.svg.call(this.zoom);
 
       var assignRidingClass = function assignRidingClass(data) {
@@ -1196,21 +1218,29 @@ function (_React$Component) {
 
       var handleMouseOver = function handleMouseOver(d, i) {
         var setCurrentRidingTooltipAction = _this3.props.setCurrentRidingTooltip;
-        var htmlNode = document.getElementsByTagName('html');
 
-        if (window.innerWidth >= _this3.mediumThreshold && htmlNode && htmlNode[0] && (htmlNode[0].className.indexOf('ipad') < 0 || htmlNode[0].className.indexOf('tablet') < 0)) {
-          setCurrentRidingTooltipAction(d.properties.EDNumber20 ? d.properties.EDNumber20 : i + e6nHardcodedRidingIdFix);
+        if (setCurrentRidingTooltipAction) {
+          var htmlNode = document.getElementsByTagName('html');
+
+          if (window.innerWidth >= _this3.mediumThreshold && htmlNode && htmlNode[0] && (htmlNode[0].className.indexOf('ipad') < 0 || htmlNode[0].className.indexOf('tablet') < 0)) {
+            setCurrentRidingTooltipAction(d.properties.EDNumber20 ? d.properties.EDNumber20 : i + e6nHardcodedRidingIdFix);
+          }
         }
       };
 
       var handleMouseOut = function handleMouseOut() {
         var setCurrentRidingTooltipAction = _this3.props.setCurrentRidingTooltip;
-        var htmlNode = document.getElementsByTagName('html');
 
-        if (window.innerWidth >= _this3.mediumThreshold && htmlNode && htmlNode[0] && (htmlNode[0].className.indexOf('ipad') < 0 || htmlNode[0].className.indexOf('tablet') < 0)) {
-          setCurrentRidingTooltipAction(-1);
+        if (setCurrentRidingTooltipAction) {
+          var htmlNode = document.getElementsByTagName('html');
+
+          if (window.innerWidth >= _this3.mediumThreshold && htmlNode && htmlNode[0] && (htmlNode[0].className.indexOf('ipad') < 0 || htmlNode[0].className.indexOf('tablet') < 0)) {
+            setCurrentRidingTooltipAction(-1);
+          }
         }
-      };
+      }; // Déplacer ce code dans le componentDidUpdate avec un check sur le mapData.mapUrl changed.
+      // ComponentDidMount and DidUpdate should call this.
+
 
       window.d3.json(mapData.mapUrl, function (error, geodata) {
         if (error) {
@@ -1220,13 +1250,15 @@ function (_React$Component) {
         } // Create a path for each map feature in the data
 
 
-        features.selectAll('path').data(window.topojson.feature(geodata, geodata.objects.alberta).features) // generate features from TopoJSON
+        _this3.featuresGlobal.selectAll('path').data(window.topojson.feature(geodata, geodata.objects.alberta).features) // generate features from TopoJSON
         .enter().append('path').attr('d', _this3.path).attr('class', assignRidingClass).attr('id', function (data) {
           return data.properties.EDNumber20;
         }).on('click', function (polygon) {
-          setCurrentRidingThroughMap(polygon.properties.EDNumber20 + e6nHardcodedRidingIdFix, E6N_PAGE_IDS && E6N_PAGE_IDS.lists ? E6N_PAGE_IDS.lists : null);
+          if (setCurrentRidingThroughMap) {
+            setCurrentRidingThroughMap(polygon.properties.EDNumber20 + e6nHardcodedRidingIdFix, E6N_PAGE_IDS && E6N_PAGE_IDS.lists ? E6N_PAGE_IDS.lists : null);
+          }
         }).on('mouseover', handleMouseOver).on('mouseout', handleMouseOut);
-        _this3.featuresGlobal = features;
+
         _this3.zoomTransform = _this3.zoom.transform;
       });
     }
@@ -1239,8 +1271,8 @@ function (_React$Component) {
       var _this$props5 = this.props,
           allParties = _this$props5.allParties,
           allowClick = _this$props5.allowClick,
-          baseId = _this$props5.baseId,
           currentRidingId = _this$props5.currentRidingId,
+          electionId = _this$props5.electionId,
           e6nHardcodedRidingIdFix = _this$props5.e6nHardcodedRidingIdFix,
           E6N_PAGE_IDS = _this$props5.E6N_PAGE_IDS,
           E6NToolTip = _this$props5.E6NToolTip,
@@ -1259,9 +1291,9 @@ function (_React$Component) {
           isRidingOpen: isRidingOpen,
           ref: forwardMapRef,
           id: mapId
-        }, React.createElement(E6NToolTip, {
+        }, E6NToolTip && React.createElement(E6NToolTip, {
           forwardTooltipRef: this.childTooltipRef
-        }), React.createElement(D3MapZoomButton, {
+        }), ZoomOutButton && React.createElement(D3MapZoomButton, {
           ZoomOutButton: ZoomOutButton,
           onClick: this.zoomToInitialSize,
           currentPan: this.state.currentPan,
@@ -1271,6 +1303,7 @@ function (_React$Component) {
         }), React.createElement(D3MapRenderer, {
           allowClick: allowClick,
           allParties: allParties,
+          electionId: electionId,
           currentRidingId: currentRidingId,
           initializeMap: this.loadMaps,
           onMouseMove: function onMouseMove(event) {

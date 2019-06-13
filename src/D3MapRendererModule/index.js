@@ -9,7 +9,6 @@ class D3MapRendererModule extends React.Component {
    super(props);
     const {
       styledComponents,
-      mapDOMContextId,
       stylingConstants,
     } = this.props;
 
@@ -99,31 +98,33 @@ class D3MapRendererModule extends React.Component {
   }
   
   componentDidMount() {
-      const {
-        initializeMap,
-        mapDOMContextId,
-      } = this.props;
+    const {
+      initializeMap,
+      mapDOMContextId,
+    } = this.props;
     
     initializeMap(mapDOMContextId);
   }
 
+  componentDidUpdate(prevProps) {
+    const {
+      electionId,
+      initializeMap,
+      mapDOMContextId,
+    } = this.props;
+
+    if (prevProps.electionId !== electionId) {
+      initializeMap(mapDOMContextId);
+    }
+  }
+
   render() {
     const {
-      global,
+      electionId,
       onMouseMove,
       mapDOMContextId,
       partyColors,
-      stylingConstants
     } = this.props;
-
-    const {
-      bp,
-      colorsPalette,
-      mediaQueries,
-    } = stylingConstants;
-
-    const { mediaMax } = mediaQueries;
-    const { colorsDx, colorsUi } = colorsPalette;
 
     return (
       <>
@@ -133,6 +134,7 @@ class D3MapRendererModule extends React.Component {
         >
         </StyledCanvas>
         <StyledSvg
+          key={`${mapDOMContextId}-${electionId}`}
           id={mapDOMContextId}
           onMouseMove={onMouseMove}
           partyColors={partyColors}
