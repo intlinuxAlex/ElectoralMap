@@ -2,7 +2,8 @@
 
 A package that displays an electoral map via D3 (v4) and GES payloads.
 Built for a uninominal system, this module can support any of these types of elections, on a provincial or national scale.
-
+The module comes with its own built-in breakpoint and color constants.
+It requires from its parent a bundle of utilities imported from "styled-components", notably the "styled" and "css" functions. 
 ## Installation
 
 ```npm
@@ -10,6 +11,7 @@ npm i --save electoral-map
 ```
 
 ## Parameters
+### Optional Parameters
     allParties: An object containing an array of objects which contain relevant information about a single party.
         {
             acronym: "IND"
@@ -53,19 +55,25 @@ npm i --save electoral-map
 
     E6NToolTip: A styled object which is displayed on hovering over a riding or polygon.
 
-    forwardMapRef: A function ref propagated to link the D3Map to its parent container 
-
-    styledComponents: An object containing functions and other objects extracted from the 'styled-components' npm library. 
-
+    forwardMapRef: A function ref propagated to link the D3Map to its parent container.
+    
     isRidingOpen: A boolean representing wether a riding is currently open. 
 
     isWidget: A boolean indicating wether the map lives within its natural context (the electoral/E6N page) or within a newsstory document as a widget.
+
+    setCurrentRiding: An action/reducer which sends the current riding id into the Redux Store.
+
+    setCurrentRidingTooltip: An action/reducer which sends the current riding name into the Redux Store.
+
+    d3SourceScript: A string containing the path to the bundled d3 library. Default: "https://ici.radio-canada.ca/unit/static/e6n/bundle-d3-topojson.js"
+
+### Required parameters
+    styledComponents: An object containing functions and other objects extracted from the 'styled-components' npm library, notably the "styled" and "css" functions. 
 
     mapData: An object with various map configurations 
         {
             height: 600 (Default height)
             initialProjectionScale: 22 (Default scale multiplier)
-
             mapConfigurations:  [  (For every breakpoint between the lower and higher boundary, on a riding click, center the riding at the 1/(widthDifferential) of the container)
                 {
                     higherBoundary: 1024 
@@ -90,9 +98,3 @@ npm i --save electoral-map
     mapDOMContextId: Id of the Map container in E6N page.
 
     mapId: Id of the map itself.
-    
-    setCurrentRiding: An action/reducer which sends the current riding id into the Redux Store.
-
-    setCurrentRidingTooltip: An action/reducer which sends the current riding name into the Redux Store.
-
-    d3SourceScript: A string containing the path to the bundled d3 library. Default: "https://ici.radio-canada.ca/unit/static/e6n/bundle-d3-topojson.js"
