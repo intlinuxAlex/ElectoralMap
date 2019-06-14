@@ -35,6 +35,8 @@ class D3Map extends React.Component {
       this.zoomToInitialSize = this.zoomToInitialSize.bind(this);
       this.loadMaps = this.loadMaps.bind(this);
   
+      this.latestTransform = null;
+
       this.childTooltipRef = React.createRef();
 
       const {
@@ -200,10 +202,23 @@ class D3Map extends React.Component {
       return true;
     }
 
+    GetCornerCoordinates() {
+      if (!this.props.isEditMode) return null;
+
+      if (this.latestTransform) {
+        return getVisibleArea(this.lastestTransform);
+      }
+      return null;
+    }
+    
     getVisibleArea(transform) {
+      const {
+        mapDOMContextId
+      } = this.props;
+
       const currentProjection = this.projection;
       const topLeft = transform.invert([0, 0]);
-      const bottomRight = transform.invert([document.getElementById("maps_d3").clientWidth, document.getElementById("maps_d3").clientHeight]);
+      const bottomRight = transform.invert([document.getElementById(mapDOMContextId).clientWidth, document.getElementById(mapDOMContextId).clientHeight]);
       const formattedTopLeft = currentProjection.invert([topLeft[0], topLeft[1]]);
       const formattedBottomRight = currentProjection.invert([bottomRight[0], bottomRight[1]]);
 
@@ -216,7 +231,8 @@ class D3Map extends React.Component {
           longitude: formattedTopLeft[0],
           latitude: formattedTopLeft[1],
         }
-      }
+      };
+      return cornersCoordinates;
     }
    
     zoomed() {
@@ -244,7 +260,7 @@ class D3Map extends React.Component {
 
     zoomEnd() {
       const { allowZoom } = this.props;
-      
+      this.latestTransform = window.d3.event.transform;
       if (!allowZoom) {
         window.d3.event.transform.x = 0;
         window.d3.event.transform.y = 0;
@@ -267,6 +283,7 @@ class D3Map extends React.Component {
         cornersCoordinates,
         setCurrentRiding: setCurrentRidingThroughMap,
         mapData,
+        mapDOMContextId,
         mapId,
         e6nHardcodedRidingIdFix,
         E6N_PAGE_IDS
@@ -378,8 +395,8 @@ class D3Map extends React.Component {
   
 
         if (cornersCoordinates) {
-          const width = document.getElementById('maps_d3').parentNode.offsetWidth;
-          const height = document.getElementById('maps_d3').parentNode.offsetHeight;
+          const width = document.getElementById(mapDOMContextId).parentNode.offsetWidth;
+          const height = document.getElementById(mapDOMContextId).parentNode.offsetHeight;
           const bounds = [this.projection([cornersCoordinates.topLeft.longitude, cornersCoordinates.topLeft.latitude]), this.projection([cornersCoordinates.bottomRight.longitude,cornersCoordinates.bottomRight.latitude])];
           const dx = bounds[1][0] - bounds[0][0];
           const dy = bounds[1][1] - bounds[0][1];
