@@ -199,6 +199,25 @@ class D3Map extends React.Component {
   
       return true;
     }
+
+    getVisibleArea(transform) {
+      const currentProjection = this.projection;
+      const topLeft = transform.invert([0, 0]);
+      const bottomRight = transform.invert([document.getElementById("maps_d3").clientWidth, document.getElementById("maps_d3").clientHeight]);
+      const formattedTopLeft = currentProjection.invert([topLeft[0], topLeft[1]]);
+      const formattedBottomRight = currentProjection.invert([bottomRight[0], bottomRight[1]]);
+
+      const cornersCoordinates = {
+        bottomRight: {
+          longitude: formattedBottomRight[0],
+          latitude: formattedBottomRight[1],
+        },
+        topLeft: {
+          longitude: formattedTopLeft[0],
+          latitude: formattedTopLeft[1],
+        }
+      }
+    }
    
     zoomed() {
       const {
@@ -245,6 +264,7 @@ class D3Map extends React.Component {
   
     loadMaps(mapDOMId) {
       const {
+        cornersCoordinates,
         setCurrentRiding: setCurrentRidingThroughMap,
         mapData,
         mapId,
@@ -356,6 +376,21 @@ class D3Map extends React.Component {
           .on('mouseover', handleMouseOver)
           .on('mouseout', handleMouseOut);
   
+
+        if (cornersCoordinates) {
+          const width = document.getElementById('maps_d3').parentNode.offsetWidth;
+          const height = document.getElementById('maps_d3').parentNode.offsetHeight;
+          const bounds = [this.projection([cornersCoordinates.topLeft.longitude, cornersCoordinates.topLeft.latitude]), this.projection([cornersCoordinates.bottomRight.longitude,cornersCoordinates.bottomRight.latitude])];
+          const dx = bounds[1][0] - bounds[0][0];
+          const dy = bounds[1][1] - bounds[0][1];
+          const x = (bounds[0][0] + bounds[1][0]) / 2;
+          const y = (bounds[0][1] + bounds[1][1]) / 2;
+          const scale = 0.999 / Math.max(dx / width, dy / height);
+          const translate = [width / 2 - scale * x, height / 2 - scale * y];
+          this.featuresGlobal
+            .attr('transform', `translate(${translate[0]},${translate[1]})scale(${scale})`)
+            .selectAll('path').style('stroke-width', `${1.2 / 22.9}px`);
+        } 
         this.zoomTransform = this.zoom.transform;
       });
     }
