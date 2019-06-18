@@ -1,7 +1,7 @@
 {
   "name": "electoral-map",
-  "version": "0.0.1",
-  "description": "A package to render the RC  E6N Electoral Map",
+  "version": "1.0.0",
+  "description": "A package to render the CBC/RC E6N Electoral Map",
   "main": "./dist/index.js",
   "types": "./src/D3Map/index.d.ts",
   "dependencies": {
