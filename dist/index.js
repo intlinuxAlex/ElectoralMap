@@ -958,6 +958,7 @@ function (_React$Component) {
     _this.zoomEnd = _this.zoomEnd.bind(_assertThisInitialized(_this));
     _this.zoomToInitialSize = _this.zoomToInitialSize.bind(_assertThisInitialized(_this));
     _this.loadMaps = _this.loadMaps.bind(_assertThisInitialized(_this));
+    _this.latestTransform = null;
     _this.childTooltipRef = React.createRef();
     var _this$props = _this.props,
         isRidingOpen = _this$props.isRidingOpen,
@@ -1126,6 +1127,38 @@ function (_React$Component) {
       return true;
     }
   }, {
+    key: "GetCornerCoordinates",
+    value: function GetCornerCoordinates() {
+      if (!this.props.isEditMode) return null;
+
+      if (this.latestTransform) {
+        return getVisibleArea(this.lastestTransform);
+      }
+
+      return null;
+    }
+  }, {
+    key: "getVisibleArea",
+    value: function getVisibleArea(transform) {
+      var mapDOMContextId = this.props.mapDOMContextId;
+      var currentProjection = this.projection;
+      var topLeft = transform.invert([0, 0]);
+      var bottomRight = transform.invert([document.getElementById(mapDOMContextId).clientWidth, document.getElementById(mapDOMContextId).clientHeight]);
+      var formattedTopLeft = currentProjection.invert([topLeft[0], topLeft[1]]);
+      var formattedBottomRight = currentProjection.invert([bottomRight[0], bottomRight[1]]);
+      var cornersCoordinates = {
+        bottomRight: {
+          longitude: formattedBottomRight[0],
+          latitude: formattedBottomRight[1]
+        },
+        topLeft: {
+          longitude: formattedTopLeft[0],
+          latitude: formattedTopLeft[1]
+        }
+      };
+      return cornersCoordinates;
+    }
+  }, {
     key: "zoomed",
     value: function zoomed() {
       var allowZoom = this.props.allowZoom;
@@ -1150,6 +1183,7 @@ function (_React$Component) {
     key: "zoomEnd",
     value: function zoomEnd() {
       var allowZoom = this.props.allowZoom;
+      this.latestTransform = window.d3.event.transform;
 
       if (!allowZoom) {
         window.d3.event.transform.x = 0;
@@ -1172,8 +1206,10 @@ function (_React$Component) {
       var _this3 = this;
 
       var _this$props4 = this.props,
+          cornersCoordinates = _this$props4.cornersCoordinates,
           setCurrentRidingThroughMap = _this$props4.setCurrentRiding,
           mapData = _this$props4.mapData,
+          mapDOMContextId = _this$props4.mapDOMContextId,
           mapId = _this$props4.mapId,
           e6nHardcodedRidingIdFix = _this$props4.e6nHardcodedRidingIdFix,
           E6N_PAGE_IDS = _this$props4.E6N_PAGE_IDS;
@@ -1258,6 +1294,20 @@ function (_React$Component) {
             setCurrentRidingThroughMap(polygon.properties.EDNumber20 + e6nHardcodedRidingIdFix, E6N_PAGE_IDS && E6N_PAGE_IDS.lists ? E6N_PAGE_IDS.lists : null);
           }
         }).on('mouseover', handleMouseOver).on('mouseout', handleMouseOut);
+
+        if (cornersCoordinates) {
+          var width = document.getElementById(mapDOMContextId).parentNode.offsetWidth;
+          var height = document.getElementById(mapDOMContextId).parentNode.offsetHeight;
+          var bounds = [_this3.projection([cornersCoordinates.topLeft.longitude, cornersCoordinates.topLeft.latitude]), _this3.projection([cornersCoordinates.bottomRight.longitude, cornersCoordinates.bottomRight.latitude])];
+          var dx = bounds[1][0] - bounds[0][0];
+          var dy = bounds[1][1] - bounds[0][1];
+          var x = (bounds[0][0] + bounds[1][0]) / 2;
+          var y = (bounds[0][1] + bounds[1][1]) / 2;
+          var scale = 0.999 / Math.max(dx / width, dy / height);
+          var translate = [width / 2 - scale * x, height / 2 - scale * y];
+
+          _this3.featuresGlobal.attr('transform', "translate(".concat(translate[0], ",").concat(translate[1], ")scale(").concat(scale, ")")).selectAll('path').style('stroke-width', "".concat(1.2 / 22.9, "px"));
+        }
 
         _this3.zoomTransform = _this3.zoom.transform;
       });
