@@ -318,6 +318,24 @@ class D3Map extends React.Component {
         .center([mapData.xCentering, mapData.yCentering]) // projection center
         .translate([mapSearchSection.clientWidth / 2, mapSearchSection.clientHeight / 2]); // translate to center the map in view
   
+      if (cornersCoordinates) {
+        const cornersAverageLongitude = (cornersCoordinates.topLeft.longitude + cornersCoordinates.bottomRight.longitude) / 2;
+        const cornersAverageLattitude = (cornersCoordinates.topLeft.latitude + cornersCoordinates.bottomRight.latitude) / 2;
+        const width = document.getElementById(mapDOMContextId).parentNode.offsetWidth;
+        const height = document.getElementById(mapDOMContextId).parentNode.offsetHeight;
+        const bounds = [this.projection([cornersCoordinates.topLeft.longitude, cornersCoordinates.topLeft.latitude]), this.projection([cornersCoordinates.bottomRight.longitude,cornersCoordinates.bottomRight.latitude])];
+        const dx = bounds[1][0] - bounds[0][0];
+        const dy = bounds[1][1] - bounds[0][1];
+        const x = (bounds[0][0] + bounds[1][0]) / 2;
+        const y = (bounds[0][1] + bounds[1][1]) / 2;
+        const initialScaleMultiplier = 0.99999 / Math.max(dx / width, dy / height);
+        this.projection = window.d3[projectionModel]()
+          .scale(relativeInitialScale * initialScaleMultiplier)
+          .rotate([rotations.x, rotations.y, rotations.z])
+          .center([cornersAverageLongitude, cornersAverageLattitude]) // projection center
+          .translate([mapSearchSection.clientWidth / 2, mapSearchSection.clientHeight / 2]); // translate to center the map in view
+  
+      }
       // Generate paths based on projection
       this.path = window.d3.geoPath()
         .projection(this.projection);
@@ -392,22 +410,7 @@ class D3Map extends React.Component {
           })
           .on('mouseover', handleMouseOver)
           .on('mouseout', handleMouseOut);
-  
 
-        if (cornersCoordinates) {
-          const width = document.getElementById(mapDOMContextId).parentNode.offsetWidth;
-          const height = document.getElementById(mapDOMContextId).parentNode.offsetHeight;
-          const bounds = [this.projection([cornersCoordinates.topLeft.longitude, cornersCoordinates.topLeft.latitude]), this.projection([cornersCoordinates.bottomRight.longitude,cornersCoordinates.bottomRight.latitude])];
-          const dx = bounds[1][0] - bounds[0][0];
-          const dy = bounds[1][1] - bounds[0][1];
-          const x = (bounds[0][0] + bounds[1][0]) / 2;
-          const y = (bounds[0][1] + bounds[1][1]) / 2;
-          const scale = 0.999 / Math.max(dx / width, dy / height);
-          const translate = [width / 2 - scale * x, height / 2 - scale * y];
-          this.featuresGlobal
-            .attr('transform', `translate(${translate[0]},${translate[1]})scale(${scale})`)
-            .selectAll('path').style('stroke-width', `${1.2 / 22.9}px`);
-        } 
         this.zoomTransform = this.zoom.transform;
       });
     }

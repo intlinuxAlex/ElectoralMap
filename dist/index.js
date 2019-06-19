@@ -1236,7 +1236,22 @@ function (_React$Component) {
 
       this.projection = window.d3[projectionModel]().scale(relativeInitialScale).rotate([rotations.x, rotations.y, rotations.z]).center([mapData.xCentering, mapData.yCentering]) // projection center
       .translate([mapSearchSection.clientWidth / 2, mapSearchSection.clientHeight / 2]); // translate to center the map in view
-      // Generate paths based on projection
+
+      if (cornersCoordinates) {
+        var cornersAverageLongitude = (cornersCoordinates.topLeft.longitude + cornersCoordinates.bottomRight.longitude) / 2;
+        var cornersAverageLattitude = (cornersCoordinates.topLeft.latitude + cornersCoordinates.bottomRight.latitude) / 2;
+        var width = document.getElementById(mapDOMContextId).parentNode.offsetWidth;
+        var height = document.getElementById(mapDOMContextId).parentNode.offsetHeight;
+        var bounds = [this.projection([cornersCoordinates.topLeft.longitude, cornersCoordinates.topLeft.latitude]), this.projection([cornersCoordinates.bottomRight.longitude, cornersCoordinates.bottomRight.latitude])];
+        var dx = bounds[1][0] - bounds[0][0];
+        var dy = bounds[1][1] - bounds[0][1];
+        var x = (bounds[0][0] + bounds[1][0]) / 2;
+        var y = (bounds[0][1] + bounds[1][1]) / 2;
+        var initialScaleMultiplier = 0.99999 / Math.max(dx / width, dy / height);
+        this.projection = window.d3[projectionModel]().scale(relativeInitialScale * initialScaleMultiplier).rotate([rotations.x, rotations.y, rotations.z]).center([cornersAverageLongitude, cornersAverageLattitude]) // projection center
+        .translate([mapSearchSection.clientWidth / 2, mapSearchSection.clientHeight / 2]); // translate to center the map in view
+      } // Generate paths based on projection
+
 
       this.path = window.d3.geoPath().projection(this.projection); // Create an SVG
 
@@ -1294,20 +1309,6 @@ function (_React$Component) {
             setCurrentRidingThroughMap(polygon.properties.EDNumber20 + e6nHardcodedRidingIdFix, E6N_PAGE_IDS && E6N_PAGE_IDS.lists ? E6N_PAGE_IDS.lists : null);
           }
         }).on('mouseover', handleMouseOver).on('mouseout', handleMouseOut);
-
-        if (cornersCoordinates) {
-          var width = document.getElementById(mapDOMContextId).parentNode.offsetWidth;
-          var height = document.getElementById(mapDOMContextId).parentNode.offsetHeight;
-          var bounds = [_this3.projection([cornersCoordinates.topLeft.longitude, cornersCoordinates.topLeft.latitude]), _this3.projection([cornersCoordinates.bottomRight.longitude, cornersCoordinates.bottomRight.latitude])];
-          var dx = bounds[1][0] - bounds[0][0];
-          var dy = bounds[1][1] - bounds[0][1];
-          var x = (bounds[0][0] + bounds[1][0]) / 2;
-          var y = (bounds[0][1] + bounds[1][1]) / 2;
-          var scale = 0.999 / Math.max(dx / width, dy / height);
-          var translate = [width / 2 - scale * x, height / 2 - scale * y];
-
-          _this3.featuresGlobal.attr('transform', "translate(".concat(translate[0], ",").concat(translate[1], ")scale(").concat(scale, ")")).selectAll('path').style('stroke-width', "".concat(1.2 / 22.9, "px"));
-        }
 
         _this3.zoomTransform = _this3.zoom.transform;
       });
