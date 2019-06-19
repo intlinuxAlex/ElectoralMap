@@ -34,6 +34,8 @@ class D3Map extends React.Component {
       this.zoomEnd = this.zoomEnd.bind(this);
       this.zoomToInitialSize = this.zoomToInitialSize.bind(this);
       this.loadMaps = this.loadMaps.bind(this);
+      this.GetCornerCoordinates = this.GetCornerCoordinates.bind(this);
+      this.getVisibleArea = this.getVisibleArea.bind(this);
   
       this.latestTransform = null;
 
@@ -206,7 +208,7 @@ class D3Map extends React.Component {
       if (!this.props.isEditMode) return null;
 
       if (this.latestTransform) {
-        return getVisibleArea(this.lastestTransform);
+        return this.getVisibleArea(this.latestTransform);
       }
       return null;
     }

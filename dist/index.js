@@ -958,6 +958,8 @@ function (_React$Component) {
     _this.zoomEnd = _this.zoomEnd.bind(_assertThisInitialized(_this));
     _this.zoomToInitialSize = _this.zoomToInitialSize.bind(_assertThisInitialized(_this));
     _this.loadMaps = _this.loadMaps.bind(_assertThisInitialized(_this));
+    _this.GetCornerCoordinates = _this.GetCornerCoordinates.bind(_assertThisInitialized(_this));
+    _this.getVisibleArea = _this.getVisibleArea.bind(_assertThisInitialized(_this));
     _this.latestTransform = null;
     _this.childTooltipRef = React.createRef();
     var _this$props = _this.props,
@@ -1132,7 +1134,7 @@ function (_React$Component) {
       if (!this.props.isEditMode) return null;
 
       if (this.latestTransform) {
-        return getVisibleArea(this.lastestTransform);
+        return this.getVisibleArea(this.latestTransform);
       }
 
       return null;
