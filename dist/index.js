@@ -956,11 +956,18 @@ function (_React$Component) {
     _this.focusOnRiding = _this.focusOnRiding.bind(_assertThisInitialized(_this));
     _this.zoomed = _this.zoomed.bind(_assertThisInitialized(_this));
     _this.zoomEnd = _this.zoomEnd.bind(_assertThisInitialized(_this));
+    _this.roundUpNextPowerOfTwo = _this.roundUpNextPowerOfTwo.bind(_assertThisInitialized(_this));
+    _this.roundDownNextPowerOfTwo = _this.roundDownNextPowerOfTwo.bind(_assertThisInitialized(_this));
+    _this.disableZoomOut = false;
+    _this.disableZoomIn = false;
+    _this.decrementZoom = _this.decrementZoom.bind(_assertThisInitialized(_this));
+    _this.incrementZoom = _this.incrementZoom.bind(_assertThisInitialized(_this));
     _this.zoomToInitialSize = _this.zoomToInitialSize.bind(_assertThisInitialized(_this));
     _this.loadMaps = _this.loadMaps.bind(_assertThisInitialized(_this));
     _this.GetCornerCoordinates = _this.GetCornerCoordinates.bind(_assertThisInitialized(_this));
     _this.getVisibleArea = _this.getVisibleArea.bind(_assertThisInitialized(_this));
     _this.latestTransform = null;
+    _this.allowZoomButtonsWhileTransitioning = true;
     _this.childTooltipRef = React.createRef();
     var _this$props = _this.props,
         isRidingOpen = _this$props.isRidingOpen,
@@ -1316,6 +1323,84 @@ function (_React$Component) {
       });
     }
   }, {
+    key: "incrementZoom",
+    value: function incrementZoom() {
+      var allowZoom = this.props.allowZoom;
+      var currentZoom = this.state.currentZoom;
+
+      if (allowZoom && this.allowZoomButtonsWhileTransitioning) {
+        this.allowZoomButtonsWhileTransitioning = false;
+        var desiredScale = this.roundUpNextPowerOfTwo(currentZoom ? currentZoom : 1);
+        this.svg.transition().duration(400).call(this.zoom.scaleTo, desiredScale);
+        this.allowZoomButtonsWhileTransitioning = true;
+      }
+    }
+  }, {
+    key: "decrementZoom",
+    value: function decrementZoom() {
+      var allowZoom = this.props.allowZoom;
+      var currentZoom = this.state.currentZoom;
+
+      if (allowZoom && this.allowZoomButtonsWhileTransitioning) {
+        this.allowZoomButtonsWhileTransitioning = false;
+        var desiredScale = this.roundDownNextPowerOfTwo(currentZoom - 1 ? currentZoom - 1 : 1);
+        this.svg.transition().duration(400).call(this.zoom.scaleTo, desiredScale);
+        this.allowZoomButtonsWhileTransitioning = true;
+      }
+    }
+  }, {
+    key: "roundDownNextPowerOfTwo",
+    value: function roundDownNextPowerOfTwo(currentZoom) {
+      var mapData = this.props.mapData;
+      var power;
+
+      for (var i = 1; i < mapData.zoomMax; i++) {
+        power = Math.pow(2, i);
+
+        if (power > currentZoom) {
+          if (power <= this.minimalZoom) {
+            this.disableZoomOut = true;
+          }
+
+          this.disableZoomOut = false;
+          return power / 2;
+        }
+      }
+    }
+  }, {
+    key: "roundUpNextPowerOfTwo",
+    value: function roundUpNextPowerOfTwo(currentZoom) {
+      if (currentZoom === 1) return 2;
+      var mapData = this.props.mapData;
+      var power;
+
+      for (var i = 1; i < mapData.zoomMax; i++) {
+        power = Math.pow(2, i);
+
+        if (power > currentZoom) {
+          if (power >= mapData.zoomMax) {
+            this.disableZoomIn = true;
+            return mapData.zoomMax;
+          }
+
+          this.disableZoomIn = false;
+          return power;
+        }
+      }
+    }
+    /*
+    
+    À l'intention de Véronique Leclerc
+      Salut Vero! La composante est prete a recevoir le bouton zoomIn et zoomOut.
+      2 petites infos.
+      La fonctionnalité des boutons se nomme this.incrementZoom et this.decrementZoom;
+      La variable qui dit aux boutons de se griser se nomme this.disableZoomIn et this.disableZoomOut
+                  <button style={LeStylingMagnifique} onClick={this.incrementZoom}>
+                  MAUDIT BEAU BOUTON PLUS
+                </button>
+      */
+
+  }, {
     key: "render",
     value: function render() {
       var _this4 = this;
@@ -1330,6 +1415,7 @@ function (_React$Component) {
           E6N_PAGE_IDS = _this$props5.E6N_PAGE_IDS,
           E6NToolTip = _this$props5.E6NToolTip,
           forwardMapRef = _this$props5.forwardMapRef,
+          isEditMode = _this$props5.isEditMode,
           isRidingOpen = _this$props5.isRidingOpen,
           mapDOMContextId = _this$props5.mapDOMContextId,
           mapId = _this$props5.mapId,

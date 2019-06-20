@@ -32,12 +32,20 @@ class D3Map extends React.Component {
       this.focusOnRiding = this.focusOnRiding.bind(this);
       this.zoomed = this.zoomed.bind(this);
       this.zoomEnd = this.zoomEnd.bind(this);
+      this.roundUpNextPowerOfTwo = this.roundUpNextPowerOfTwo.bind(this);
+      this.roundDownNextPowerOfTwo = this.roundDownNextPowerOfTwo.bind(this);
+      this.disableZoomOut = false;
+      this.disableZoomIn = false;
+      this.decrementZoom = this.decrementZoom.bind(this);
+      this.incrementZoom = this.incrementZoom.bind(this);
       this.zoomToInitialSize = this.zoomToInitialSize.bind(this);
       this.loadMaps = this.loadMaps.bind(this);
       this.GetCornerCoordinates = this.GetCornerCoordinates.bind(this);
       this.getVisibleArea = this.getVisibleArea.bind(this);
   
       this.latestTransform = null;
+
+      this.allowZoomButtonsWhileTransitioning = true; 
 
       this.childTooltipRef = React.createRef();
 
@@ -242,6 +250,7 @@ class D3Map extends React.Component {
         allowZoom,
       } = this.props;
 
+      
       if (allowZoom) {
         this.featuresGlobal
           .attr('transform', window.d3.event.transform)
@@ -270,7 +279,7 @@ class D3Map extends React.Component {
       }
 
       this.featuresGlobal.selectAll('path').style('stroke-width', `${Math.max(0.01, 1 / (window.d3.event.transform.k * 2))}px`);
-      
+
       this.setState({
         currentPan:{
           transformX: window.d3.event.transform.x,
@@ -417,6 +426,100 @@ class D3Map extends React.Component {
       });
     }
   
+    incrementZoom() { 
+      const {
+        allowZoom,
+      } = this.props;
+
+      const {
+        currentZoom,
+      } = this.state;
+
+      if (allowZoom && this.allowZoomButtonsWhileTransitioning) {
+        this.allowZoomButtonsWhileTransitioning = false;
+        const desiredScale = this.roundUpNextPowerOfTwo(currentZoom ? currentZoom : 1);
+        this.svg.transition()
+          .duration(400)
+          .call(this.zoom.scaleTo, desiredScale);
+        this.allowZoomButtonsWhileTransitioning = true;
+      }
+    }
+
+    decrementZoom() {
+      const {
+        allowZoom,
+      } = this.props;
+
+      const {
+        currentZoom,
+      } = this.state;
+
+      if (allowZoom && this.allowZoomButtonsWhileTransitioning) {
+        this.allowZoomButtonsWhileTransitioning = false;
+        const desiredScale = this.roundDownNextPowerOfTwo(currentZoom-1 ? currentZoom-1 : 1);
+        this.svg.transition()
+          .duration(400)
+          .call(this.zoom.scaleTo, desiredScale);
+        this.allowZoomButtonsWhileTransitioning = true;
+      }
+    }
+
+    roundDownNextPowerOfTwo(currentZoom) {
+      const {
+        mapData
+      } = this.props;
+
+      let power;
+      for (let i = 1; i < mapData.zoomMax; i++) {
+        power = Math.pow(2, i);
+        if (power > currentZoom) {
+          if (power <= this.minimalZoom) {
+            this.disableZoomOut = true; 
+          }
+          this.disableZoomOut = false;
+          return power/2; 
+        }
+      }
+    }
+
+    roundUpNextPowerOfTwo(currentZoom) {
+      if (currentZoom === 1) return 2;
+
+      const {
+        mapData
+      } = this.props;
+
+      let power;
+      for (let i = 1; i < mapData.zoomMax; i++) {
+        power = Math.pow(2, i);
+        if (power > currentZoom) {
+          if (power >= mapData.zoomMax) {
+            this.disableZoomIn = true; 
+            return mapData.zoomMax;
+          }
+          this.disableZoomIn = false;
+          return power; 
+        }
+      }
+
+    }
+
+    /*
+    
+    À l'intention de Véronique Leclerc
+
+    Salut Vero! La composante est prete a recevoir le bouton zoomIn et zoomOut.
+
+    2 petites infos.
+      La fonctionnalité des boutons se nomme this.incrementZoom et this.decrementZoom;
+      La variable qui dit aux boutons de se griser se nomme this.disableZoomIn et this.disableZoomOut
+
+                <button style={LeStylingMagnifique} onClick={this.incrementZoom}>
+                  MAUDIT BEAU BOUTON PLUS
+                </button>
+
+    */ 
+
     render() {
       const {
         isReady,
@@ -431,6 +534,7 @@ class D3Map extends React.Component {
         E6N_PAGE_IDS,
         E6NToolTip,
         forwardMapRef,
+        isEditMode,
         isRidingOpen,
         mapDOMContextId,
         mapId,
