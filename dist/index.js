@@ -1395,14 +1395,14 @@ function (_React$Component) {
     /*
     
     À l'intention de Véronique Leclerc
-      Salut Vero! La composante est prete a recevoir le bouton zoomIn et zoomOut.
-      2 petites infos.
+     Salut Vero! La composante est prete a recevoir le bouton zoomIn et zoomOut.
+     2 petites infos.
       La fonctionnalité des boutons se nomme this.incrementZoom et this.decrementZoom;
       La variable qui dit aux boutons de se griser se nomme this.disableZoomIn et this.disableZoomOut
-                  <button style={LeStylingMagnifique} onClick={this.incrementZoom}>
+                 <button style={LeStylingMagnifique} onClick={this.incrementZoom}>
                   MAUDIT BEAU BOUTON PLUS
                 </button>
-      */
+     */
 
   }, {
     key: "render",
