@@ -1137,6 +1137,10 @@ function (_React$Component) {
         return this.getVisibleArea(this.latestTransform);
       }
 
+      if (this.props.cornersCoordinates) {
+        return this.props.cornersCoordinates;
+      }
+
       return null;
     }
   }, {

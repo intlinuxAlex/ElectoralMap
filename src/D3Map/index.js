@@ -210,6 +210,11 @@ class D3Map extends React.Component {
       if (this.latestTransform) {
         return this.getVisibleArea(this.latestTransform);
       }
+
+      if (this.props.cornersCoordinates) {
+        return this.props.cornersCoordinates;
+      }
+      
       return null;
     }
     
