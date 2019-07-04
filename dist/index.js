@@ -1078,8 +1078,12 @@ function (_React$Component) {
           e6nHardcodedRidingIdFix = _this$props2.e6nHardcodedRidingIdFix;
       var riding = allRidings ? allRidings[featureId + e6nHardcodedRidingIdFix] : null;
 
-      if (riding && riding.leadingPartyId) {
-        return "s".concat(riding.leadingPartyId);
+      if (riding) {
+        if (riding.leadingPartyId) {
+          return "s".concat(riding.leadingPartyId);
+        } else if (riding.leadingPartyIds && riding.leadingPartyIds.length > 0) {
+          return "s".concat(riding.leadingPartyIds[0]);
+        }
       }
 
       return null;

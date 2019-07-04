@@ -147,11 +147,14 @@ class D3Map extends React.Component {
       } = this.props;
   
       const riding = allRidings ? allRidings[featureId + e6nHardcodedRidingIdFix] : null;
-  
-      if (riding && riding.leadingPartyId) {
-        return `s${riding.leadingPartyId}`;
+
+      if (riding) {
+        if (riding.leadingPartyId) {
+          return `s${riding.leadingPartyId}`;
+        } else if (riding.leadingPartyIds && riding.leadingPartyIds.length > 0) {
+          return `s${riding.leadingPartyIds[0]}`;
+        }
       }
-  
       return null;
     }
   
