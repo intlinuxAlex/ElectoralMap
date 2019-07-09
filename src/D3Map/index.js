@@ -2,7 +2,12 @@ const React = require('react');
 const stylingConstants = require('../lib/styled/stylingpackage');
 const classNames = require('classnames/dedupe');
 const D3MapRenderer = require('../D3MapRenderer');
-const D3MapZoomButton = require('../D3MapZoomButton');
+
+const zoomThresholds = {
+  X: 50,
+  Y: 50,
+  Z: 1,
+};
 
 class D3Map extends React.Component {
     constructor(props) {
@@ -523,7 +528,7 @@ class D3Map extends React.Component {
       for (let i = 1; i < mapData.zoomMax; i++) {
         power = Math.pow(2, i);
         if (power > currentZoom) {
-          if (power > mapData.zoomMax) {
+          if (power >= mapData.zoomMax) {
             this.disableZoomIn = true; 
             return mapData.zoomMax;
           }
@@ -536,6 +541,8 @@ class D3Map extends React.Component {
     render() {
       const {
         isReady,
+        currentPan,
+        currentZoom,
       } = this.state;
   
       const {
@@ -597,13 +604,13 @@ class D3Map extends React.Component {
                       type="button"
                     />
                   </StyledZoomingButtonsContainer>
-                  <D3MapZoomButton
-                    Button={Button}
+                  <Button
+                    icon="svg-zoomout"
+                    isIconFlag
                     onClick={this.zoomToInitialSize}
-                    currentPan={this.state.currentPan}
-                    currentZoom={this.state.currentZoom}
-                    styledComponents={styledComponents}
-                    stylingConstants={stylingConstants}
+                    scope="secondary"
+                    type="button"
+                    isDisabled={!(currentZoom > zoomThresholds.Z ||(currentPan && (Math.abs(currentPan.transformX) > zoomThresholds.X || Math.abs(currentPan.transformY) > zoomThresholds.Y)))}
                   />
                 </StyledButtonsContainer>
               )
