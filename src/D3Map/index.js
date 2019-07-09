@@ -1,5 +1,4 @@
 const React = require('react');
-const Component = require('react');
 const stylingConstants = require('../lib/styled/stylingpackage');
 const classNames = require('classnames/dedupe');
 const D3MapRenderer = require('../D3MapRenderer');
@@ -50,7 +49,6 @@ class D3Map extends React.Component {
       this.childTooltipRef = React.createRef();
 
       const {
-        isRidingOpen,
         styledComponents,
       } = this.props;
 
@@ -60,30 +58,54 @@ class D3Map extends React.Component {
 
       const {
         BREAKPOINTS,
+        colorsPalette,
         mediaQueries,
       } = stylingConstants;
 
 
       const bp = BREAKPOINTS;
-      const { mediaMax } = mediaQueries; 
 
       this.StyledMap = styled.div` 
-      flex-grow: 1;
-      position: relative;
+        flex-grow: 1;
+        position: relative;
 
-      ${mediaQueries.mediaMax(bp.SM.max, `
-        height: 45vh;
-      `)}
-
-      ${({ isRidingOpen }) => (isRidingOpen ? `
         ${mediaQueries.mediaMax(bp.SM.max, `
-          background-image:  linear-gradient(rgba(0, 0, 0, 0) 75%, rgba(0, 0, 0, 0.04) 100%);
+          height: 45vh;
         `)}
-      ` : '')}
-    `;
 
-      // TODO: Ajouter le reste du EditMode (les fonctions qui me permettent de get X et Y, ...)
-      if (props.isEditMode) {
+        ${({ isRidingOpen }) => (isRidingOpen ? `
+          ${mediaQueries.mediaMax(bp.SM.max, `
+            background-image:  linear-gradient(rgba(0, 0, 0, 0) 75%, rgba(0, 0, 0, 0.04) 100%);
+          `)}
+        ` : '')}
+      `;
+
+      this.StyledButtonsContainer = styled.div`
+        bottom: 20px;
+        position: absolute;
+        z-index: 10;
+
+        ${mediaQueries.mediaMax(bp.XS.max, `
+          right: 20px;
+        `)}
+        ${mediaQueries.mediaMin(bp.SM.min, `
+          left: 20px;
+        `)}
+
+        button {
+          display: block;
+        }
+
+        .svg-icon {
+          fill: ${colorsPalette.colorsDx.black}
+        }
+      `;
+
+      this.StyledZoomingButtonsContainer = styled.div`
+        margin-bottom: 20px;
+      `
+
+      if (window && props.isEditMode) {
         window.D3ElectoralMap = window.D3ElectoralMap || {};
         window.D3ElectoralMap[props.mapId] = this;
       }
@@ -477,7 +499,7 @@ class D3Map extends React.Component {
         mapData
       } = this.props;
 
-      let power;
+      let power = 0;
       for (let i = 1; i < mapData.zoomMax; i++) {
         power = Math.pow(2, i);
         if (power > currentZoom) {
@@ -497,36 +519,19 @@ class D3Map extends React.Component {
         mapData
       } = this.props;
 
-      let power;
+      let power = 0;
       for (let i = 1; i < mapData.zoomMax; i++) {
         power = Math.pow(2, i);
         if (power > currentZoom) {
-          if (power >= mapData.zoomMax) {
+          if (power > mapData.zoomMax) {
             this.disableZoomIn = true; 
             return mapData.zoomMax;
           }
           this.disableZoomIn = false;
-          return power; 
+          return power;
         }
       }
-
     }
-
-    /*
-    
-    À l'intention de Véronique Leclerc
-
-    Salut Vero! La composante est prete a recevoir le bouton zoomIn et zoomOut.
-
-    2 petites infos.
-      La fonctionnalité des boutons se nomme this.incrementZoom et this.decrementZoom;
-      La variable qui dit aux boutons de se griser se nomme this.disableZoomIn et this.disableZoomOut
-
-                <button style={LeStylingMagnifique} onClick={this.incrementZoom}>
-                  MAUDIT BEAU BOUTON PLUS
-                </button>
-
-    */ 
 
     render() {
       const {
@@ -542,17 +547,18 @@ class D3Map extends React.Component {
         E6N_PAGE_IDS,
         E6NToolTip,
         forwardMapRef,
-        isEditMode,
         isRidingOpen,
         mapDOMContextId,
         mapId,
         styledComponents,
-        ZoomOutButton,
+        Button,
       } = this.props;
   
       if (!isReady) return (null);
 
       const StyledMap = this.StyledMap;
+      const StyledButtonsContainer = this.StyledButtonsContainer;
+      const StyledZoomingButtonsContainer= this.StyledZoomingButtonsContainer;
 
       if (StyledMap) {
         return (
@@ -571,15 +577,35 @@ class D3Map extends React.Component {
               )
             }
             {
-              ZoomOutButton && (
-                <D3MapZoomButton
-                  ZoomOutButton={ZoomOutButton}
-                  onClick={this.zoomToInitialSize}
-                  currentPan={this.state.currentPan}
-                  currentZoom={this.state.currentZoom}
-                  styledComponents={styledComponents}
-                  stylingConstants={stylingConstants}
-                />
+              Button && (
+                <StyledButtonsContainer>
+                  <StyledZoomingButtonsContainer>
+                    <Button
+                      icon="svg-plus"
+                      isDisabled={this.disableZoomIn}
+                      isIconFlag
+                      onClick={this.incrementZoom}
+                      scope="secondary"
+                      type="button"
+                    />
+                    <Button
+                      icon="svg-minus"
+                      isDisabled={this.disableZoomOut}
+                      isIconFlag
+                      onClick={this.decrementZoom}
+                      scope="secondary"
+                      type="button"
+                    />
+                  </StyledZoomingButtonsContainer>
+                  <D3MapZoomButton
+                    Button={Button}
+                    onClick={this.zoomToInitialSize}
+                    currentPan={this.state.currentPan}
+                    currentZoom={this.state.currentZoom}
+                    styledComponents={styledComponents}
+                    stylingConstants={stylingConstants}
+                  />
+                </StyledButtonsContainer>
               )
             }
             <D3MapRenderer
@@ -599,7 +625,8 @@ class D3Map extends React.Component {
           </StyledMap>
         );
       }
-      return <div/>
+
+      return null;
     }
   }
 

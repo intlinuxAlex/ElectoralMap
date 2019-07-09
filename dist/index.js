@@ -491,18 +491,6 @@ module.exports = D3MapRenderer;
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
-function _templateObject() {
-  var data = _taggedTemplateLiteral(["\n      bottom: 20px;\n      left: 20px;\n      position: absolute;\n      z-index: 10;\n  \n      .svg-icon {\n        fill: ", "\n      }\n    "]);
-
-  _templateObject = function _templateObject() {
-    return data;
-  };
-
-  return data;
-}
-
-function _taggedTemplateLiteral(strings, raw) { if (!raw) { raw = strings.slice(0); } return Object.freeze(Object.defineProperties(strings, { raw: { value: Object.freeze(raw) } })); }
-
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
@@ -521,8 +509,6 @@ function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || func
 
 var React = __webpack_require__(0);
 
-var Component = __webpack_require__(0);
-
 var thresholds = {
   X: 50,
   Y: 50,
@@ -535,49 +521,27 @@ function (_React$Component) {
   _inherits(D3MapZoomButton, _React$Component);
 
   function D3MapZoomButton(props) {
-    var _this;
-
     _classCallCheck(this, D3MapZoomButton);
 
-    _this = _possibleConstructorReturn(this, _getPrototypeOf(D3MapZoomButton).call(this, props));
-    _this.StyledResetButton = null;
-    return _this;
+    return _possibleConstructorReturn(this, _getPrototypeOf(D3MapZoomButton).call(this, props));
   }
 
   _createClass(D3MapZoomButton, [{
-    key: "componentDidMount",
-    value: function componentDidMount() {
-      var _this$props = this.props,
-          ZoomOutButton = _this$props.ZoomOutButton,
-          styledComponents = _this$props.styledComponents,
-          stylingConstants = _this$props.stylingConstants;
-      var styled = styledComponents.styled,
-          css = styledComponents.css;
-      var colorsPalette = stylingConstants.colorsPalette;
-      var colorsDx = colorsPalette.colorsDx;
-      this.StyledResetButton = styled(ZoomOutButton)(_templateObject(), colorsDx.black);
-    }
-  }, {
     key: "render",
     value: function render() {
-      var _this$props2 = this.props,
-          ZoomOutButton = _this$props2.ZoomOutButton,
-          currentPan = _this$props2.currentPan,
-          onClick = _this$props2.onClick,
-          currentZoom = _this$props2.currentZoom;
-      var StyledResetButton = this.StyledResetButton;
-
-      if (currentZoom > thresholds.Z || currentPan && (Math.abs(currentPan.transformX) > thresholds.X || Math.abs(currentPan.transformY) > thresholds.Y)) {
-        return React.createElement(StyledResetButton, {
-          icon: "svg-zoomout",
-          isIconFlag: true,
-          onClick: onClick,
-          scope: "secondary",
-          type: "button"
-        });
-      }
-
-      return null;
+      var _this$props = this.props,
+          Button = _this$props.Button,
+          currentPan = _this$props.currentPan,
+          onClick = _this$props.onClick,
+          currentZoom = _this$props.currentZoom;
+      return React.createElement(Button, {
+        icon: "svg-zoomout",
+        isIconFlag: true,
+        onClick: onClick,
+        scope: "secondary",
+        type: "button",
+        isDisabled: !(currentZoom > thresholds.Z || currentPan && (Math.abs(currentPan.transformX) > thresholds.X || Math.abs(currentPan.transformY) > thresholds.Y))
+      });
     }
   }]);
 
@@ -884,8 +848,28 @@ function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try
 
 function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
 
+function _templateObject3() {
+  var data = _taggedTemplateLiteral(["\n        margin-bottom: 20px;\n      "]);
+
+  _templateObject3 = function _templateObject3() {
+    return data;
+  };
+
+  return data;
+}
+
+function _templateObject2() {
+  var data = _taggedTemplateLiteral(["\n        bottom: 20px;\n        position: absolute;\n        z-index: 10;\n\n        ", "\n        ", "\n\n        button {\n          display: block;\n        }\n\n        .svg-icon {\n          fill: ", "\n        }\n      "]);
+
+  _templateObject2 = function _templateObject2() {
+    return data;
+  };
+
+  return data;
+}
+
 function _templateObject() {
-  var data = _taggedTemplateLiteral([" \n      flex-grow: 1;\n      position: relative;\n\n      ", "\n\n      ", "\n    "]);
+  var data = _taggedTemplateLiteral([" \n        flex-grow: 1;\n        position: relative;\n\n        ", "\n\n        ", "\n      "]);
 
   _templateObject = function _templateObject() {
     return data;
@@ -913,8 +897,6 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
 
 var React = __webpack_require__(0);
-
-var Component = __webpack_require__(0);
 
 var stylingConstants = __webpack_require__(5);
 
@@ -969,20 +951,20 @@ function (_React$Component) {
     _this.latestTransform = null;
     _this.allowZoomButtonsWhileTransitioning = true;
     _this.childTooltipRef = React.createRef();
-    var _this$props = _this.props,
-        isRidingOpen = _this$props.isRidingOpen,
-        styledComponents = _this$props.styledComponents;
+    var styledComponents = _this.props.styledComponents;
     var styled = styledComponents.styled;
     var BREAKPOINTS = stylingConstants.BREAKPOINTS,
+        colorsPalette = stylingConstants.colorsPalette,
         mediaQueries = stylingConstants.mediaQueries;
     var bp = BREAKPOINTS;
-    var mediaMax = mediaQueries.mediaMax;
-    _this.StyledMap = styled.div(_templateObject(), mediaQueries.mediaMax(bp.SM.max, "\n        height: 45vh;\n      "), function (_ref) {
+    _this.StyledMap = styled.div(_templateObject(), mediaQueries.mediaMax(bp.SM.max, "\n          height: 45vh;\n        "), function (_ref) {
       var isRidingOpen = _ref.isRidingOpen;
-      return isRidingOpen ? "\n        ".concat(mediaQueries.mediaMax(bp.SM.max, "\n          background-image:  linear-gradient(rgba(0, 0, 0, 0) 75%, rgba(0, 0, 0, 0.04) 100%);\n        "), "\n      ") : '';
-    }); // TODO: Ajouter le reste du EditMode (les fonctions qui me permettent de get X et Y, ...)
+      return isRidingOpen ? "\n          ".concat(mediaQueries.mediaMax(bp.SM.max, "\n            background-image:  linear-gradient(rgba(0, 0, 0, 0) 75%, rgba(0, 0, 0, 0.04) 100%);\n          "), "\n        ") : '';
+    });
+    _this.StyledButtonsContainer = styled.div(_templateObject2(), mediaQueries.mediaMax(bp.XS.max, "\n          right: 20px;\n        "), mediaQueries.mediaMin(bp.SM.min, "\n          left: 20px;\n        "), colorsPalette.colorsDx.black);
+    _this.StyledZoomingButtonsContainer = styled.div(_templateObject3());
 
-    if (props.isEditMode) {
+    if (window && props.isEditMode) {
       window.D3ElectoralMap = window.D3ElectoralMap || {};
       window.D3ElectoralMap[props.mapId] = _assertThisInitialized(_this);
     }
@@ -1073,9 +1055,9 @@ function (_React$Component) {
   }, {
     key: "fillRidingsWithLeadingPartyColor",
     value: function fillRidingsWithLeadingPartyColor(featureId) {
-      var _this$props2 = this.props,
-          allRidings = _this$props2.allRidings,
-          e6nHardcodedRidingIdFix = _this$props2.e6nHardcodedRidingIdFix;
+      var _this$props = this.props,
+          allRidings = _this$props.allRidings,
+          e6nHardcodedRidingIdFix = _this$props.e6nHardcodedRidingIdFix;
       var riding = allRidings ? allRidings[featureId + e6nHardcodedRidingIdFix] : null;
 
       if (riding) {
@@ -1187,9 +1169,9 @@ function (_React$Component) {
   }, {
     key: "zoomToInitialSize",
     value: function zoomToInitialSize() {
-      var _this$props3 = this.props,
-          setCurrentRidingThroughMap = _this$props3.setCurrentRiding,
-          E6N_PAGE_IDS = _this$props3.E6N_PAGE_IDS;
+      var _this$props2 = this.props,
+          setCurrentRidingThroughMap = _this$props2.setCurrentRiding,
+          E6N_PAGE_IDS = _this$props2.E6N_PAGE_IDS;
       this.svg.transition().duration(750).call(this.zoomTransform, window.d3.zoomIdentity);
 
       if (setCurrentRidingThroughMap) {
@@ -1222,14 +1204,14 @@ function (_React$Component) {
     value: function loadMaps(mapDOMId) {
       var _this3 = this;
 
-      var _this$props4 = this.props,
-          cornersCoordinates = _this$props4.cornersCoordinates,
-          setCurrentRidingThroughMap = _this$props4.setCurrentRiding,
-          mapData = _this$props4.mapData,
-          mapDOMContextId = _this$props4.mapDOMContextId,
-          mapId = _this$props4.mapId,
-          e6nHardcodedRidingIdFix = _this$props4.e6nHardcodedRidingIdFix,
-          E6N_PAGE_IDS = _this$props4.E6N_PAGE_IDS;
+      var _this$props3 = this.props,
+          cornersCoordinates = _this$props3.cornersCoordinates,
+          setCurrentRidingThroughMap = _this$props3.setCurrentRiding,
+          mapData = _this$props3.mapData,
+          mapDOMContextId = _this$props3.mapDOMContextId,
+          mapId = _this$props3.mapId,
+          e6nHardcodedRidingIdFix = _this$props3.e6nHardcodedRidingIdFix,
+          E6N_PAGE_IDS = _this$props3.E6N_PAGE_IDS;
       var mapSearchSection = document.getElementById(mapId);
       var relativeInitialScale = mapSearchSection.clientHeight * mapData.initialProjectionScale;
 
@@ -1360,7 +1342,7 @@ function (_React$Component) {
     key: "roundDownNextPowerOfTwo",
     value: function roundDownNextPowerOfTwo(currentZoom) {
       var mapData = this.props.mapData;
-      var power;
+      var power = 0;
 
       for (var i = 1; i < mapData.zoomMax; i++) {
         power = Math.pow(2, i);
@@ -1380,13 +1362,13 @@ function (_React$Component) {
     value: function roundUpNextPowerOfTwo(currentZoom) {
       if (currentZoom === 1) return 2;
       var mapData = this.props.mapData;
-      var power;
+      var power = 0;
 
       for (var i = 1; i < mapData.zoomMax; i++) {
         power = Math.pow(2, i);
 
         if (power > currentZoom) {
-          if (power >= mapData.zoomMax) {
+          if (power > mapData.zoomMax) {
             this.disableZoomIn = true;
             return mapData.zoomMax;
           }
@@ -1396,41 +1378,30 @@ function (_React$Component) {
         }
       }
     }
-    /*
-    
-    À l'intention de Véronique Leclerc
-     Salut Vero! La composante est prete a recevoir le bouton zoomIn et zoomOut.
-     2 petites infos.
-      La fonctionnalité des boutons se nomme this.incrementZoom et this.decrementZoom;
-      La variable qui dit aux boutons de se griser se nomme this.disableZoomIn et this.disableZoomOut
-                 <button style={LeStylingMagnifique} onClick={this.incrementZoom}>
-                  MAUDIT BEAU BOUTON PLUS
-                </button>
-     */
-
   }, {
     key: "render",
     value: function render() {
       var _this4 = this;
 
       var isReady = this.state.isReady;
-      var _this$props5 = this.props,
-          allParties = _this$props5.allParties,
-          allowClick = _this$props5.allowClick,
-          currentRidingId = _this$props5.currentRidingId,
-          electionId = _this$props5.electionId,
-          e6nHardcodedRidingIdFix = _this$props5.e6nHardcodedRidingIdFix,
-          E6N_PAGE_IDS = _this$props5.E6N_PAGE_IDS,
-          E6NToolTip = _this$props5.E6NToolTip,
-          forwardMapRef = _this$props5.forwardMapRef,
-          isEditMode = _this$props5.isEditMode,
-          isRidingOpen = _this$props5.isRidingOpen,
-          mapDOMContextId = _this$props5.mapDOMContextId,
-          mapId = _this$props5.mapId,
-          styledComponents = _this$props5.styledComponents,
-          ZoomOutButton = _this$props5.ZoomOutButton;
+      var _this$props4 = this.props,
+          allParties = _this$props4.allParties,
+          allowClick = _this$props4.allowClick,
+          currentRidingId = _this$props4.currentRidingId,
+          electionId = _this$props4.electionId,
+          e6nHardcodedRidingIdFix = _this$props4.e6nHardcodedRidingIdFix,
+          E6N_PAGE_IDS = _this$props4.E6N_PAGE_IDS,
+          E6NToolTip = _this$props4.E6NToolTip,
+          forwardMapRef = _this$props4.forwardMapRef,
+          isRidingOpen = _this$props4.isRidingOpen,
+          mapDOMContextId = _this$props4.mapDOMContextId,
+          mapId = _this$props4.mapId,
+          styledComponents = _this$props4.styledComponents,
+          Button = _this$props4.Button;
       if (!isReady) return null;
       var StyledMap = this.StyledMap;
+      var StyledButtonsContainer = this.StyledButtonsContainer;
+      var StyledZoomingButtonsContainer = this.StyledZoomingButtonsContainer;
 
       if (StyledMap) {
         return React.createElement(StyledMap, {
@@ -1440,14 +1411,28 @@ function (_React$Component) {
           id: mapId
         }, E6NToolTip && React.createElement(E6NToolTip, {
           forwardTooltipRef: this.childTooltipRef
-        }), ZoomOutButton && React.createElement(D3MapZoomButton, {
-          ZoomOutButton: ZoomOutButton,
+        }), Button && React.createElement(StyledButtonsContainer, null, React.createElement(StyledZoomingButtonsContainer, null, React.createElement(Button, {
+          icon: "svg-plus",
+          isDisabled: this.disableZoomIn,
+          isIconFlag: true,
+          onClick: this.incrementZoom,
+          scope: "secondary",
+          type: "button"
+        }), React.createElement(Button, {
+          icon: "svg-minus",
+          isDisabled: this.disableZoomOut,
+          isIconFlag: true,
+          onClick: this.decrementZoom,
+          scope: "secondary",
+          type: "button"
+        })), React.createElement(D3MapZoomButton, {
+          Button: Button,
           onClick: this.zoomToInitialSize,
           currentPan: this.state.currentPan,
           currentZoom: this.state.currentZoom,
           styledComponents: styledComponents,
           stylingConstants: stylingConstants
-        }), React.createElement(D3MapRenderer, {
+        })), React.createElement(D3MapRenderer, {
           allowClick: allowClick,
           allParties: allParties,
           electionId: electionId,
@@ -1465,7 +1450,7 @@ function (_React$Component) {
         }));
       }
 
-      return React.createElement("div", null);
+      return null;
     }
   }]);
 
