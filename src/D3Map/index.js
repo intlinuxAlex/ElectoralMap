@@ -301,6 +301,7 @@ class D3Map extends React.Component {
       const {
         cornersCoordinates,
         setCurrentRiding: setCurrentRidingThroughMap,
+        isWidget,
         mapData,
         mapDOMContextId,
         mapId,
@@ -373,6 +374,9 @@ class D3Map extends React.Component {
       // Change [1,Infinity] to adjust the min/max zoom scale
       this.zoom = window.d3.zoom()
         .scaleExtent([this.minimalZoom, mapData.zoomMax])
+        .filter(() => {
+          return !(d3.event.type==='wheel' && !d3.event.ctrlKey && isWidget)
+        }) 
         .on('end', this.zoomEnd)
         .on('zoom', this.zoomed);
   

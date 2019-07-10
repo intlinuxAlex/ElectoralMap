@@ -1225,6 +1225,7 @@ function (_React$Component) {
       var _this$props4 = this.props,
           cornersCoordinates = _this$props4.cornersCoordinates,
           setCurrentRidingThroughMap = _this$props4.setCurrentRiding,
+          isWidget = _this$props4.isWidget,
           mapData = _this$props4.mapData,
           mapDOMContextId = _this$props4.mapDOMContextId,
           mapId = _this$props4.mapId,
@@ -1277,7 +1278,9 @@ function (_React$Component) {
       this.featuresGlobal = this.svg.append('g').attr('class', 'features'); // Create zoom/pan listener
       // Change [1,Infinity] to adjust the min/max zoom scale
 
-      this.zoom = window.d3.zoom().scaleExtent([this.minimalZoom, mapData.zoomMax]).on('end', this.zoomEnd).on('zoom', this.zoomed);
+      this.zoom = window.d3.zoom().scaleExtent([this.minimalZoom, mapData.zoomMax]).filter(function () {
+        return !(d3.event.type === 'wheel' && !d3.event.ctrlKey && isWidget);
+      }).on('end', this.zoomEnd).on('zoom', this.zoomed);
       this.svg.call(this.zoom);
 
       var assignRidingClass = function assignRidingClass(data) {
@@ -1399,14 +1402,14 @@ function (_React$Component) {
     /*
     
     À l'intention de Véronique Leclerc
-     Salut Vero! La composante est prete a recevoir le bouton zoomIn et zoomOut.
-     2 petites infos.
+      Salut Vero! La composante est prete a recevoir le bouton zoomIn et zoomOut.
+      2 petites infos.
       La fonctionnalité des boutons se nomme this.incrementZoom et this.decrementZoom;
       La variable qui dit aux boutons de se griser se nomme this.disableZoomIn et this.disableZoomOut
-                 <button style={LeStylingMagnifique} onClick={this.incrementZoom}>
+                  <button style={LeStylingMagnifique} onClick={this.incrementZoom}>
                   MAUDIT BEAU BOUTON PLUS
                 </button>
-     */
+      */
 
   }, {
     key: "render",
