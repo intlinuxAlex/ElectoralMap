@@ -22,6 +22,7 @@ class D3Map extends React.Component {
       this.mediumThreshold = 1024;
   
       this.featuresGlobal = null;
+      this.featuresParent = null;
       this.path = null;
       this.projection = null;
       this.svg = null;
@@ -258,12 +259,28 @@ class D3Map extends React.Component {
         allowZoom,
       } = this.props;
 
-      
+      const {
+        BREAKPOINTS,
+      } = stylingConstants;
+
+      const bp = BREAKPOINTS;
+
       if (allowZoom) {
-        this.featuresGlobal
-          .attr('transform', window.d3.event.transform)
-          .selectAll('path').style('stroke-width', `${Math.max(0.01, 1 / (window.d3.event.transform.k * 2))}px`); // updated for d3 v4
-      }
+      //Remove this comment once d3 bug is solved  if (!window.d3.event.sourceEvent // situation d'un clic sur une circonscription
+      //Remove this comment once d3 bug is solved     || window.innerWidth > bp.SM.max // on est plus en mobile, comportement habituel
+      //Remove this comment once d3 bug is solved     || (window.innerWidth <= bp.SM.max && window.d3.event.sourceEvent && window.d3.event.sourceEvent.touches && window.d3.event.sourceEvent.touches.length > 1)) { // on est en mobile et un event a un doigt
+          this.featuresGlobal
+            .attr('transform', window.d3.event.transform)
+            .selectAll('path').style('stroke-width', `${Math.max(0.01, 1 / (window.d3.event.transform.k * 2))}px`); // updated for d3 v4
+        }
+     //Remove this comment once d3 bug is solved    else {
+      //Remove this comment once d3 bug is solved     this.ignoreLastZoom = true;
+          //window.d3.event.stopPropagation();
+      //Remove this comment once d3 bug is solved     return null;
+          //window.d3.event.sourceEvent.preventDefault();
+
+     //Remove this comment once d3 bug is solved    }
+      //Remove this comment once d3 bug is solved }
     }
   
     zoomToInitialSize() {
@@ -280,7 +297,8 @@ class D3Map extends React.Component {
     zoomEnd() {
       const { allowZoom } = this.props;
       this.latestTransform = window.d3.event.transform;
-      if (!allowZoom) {
+
+      if (!allowZoom /*Remove this comment once d3 bug is solved || this.ignoreLastZoom*/) {
         window.d3.event.transform.x = 0;
         window.d3.event.transform.y = 0;
         window.d3.event.transform.k = 1;
@@ -295,6 +313,7 @@ class D3Map extends React.Component {
         },
         currentZoom: window.d3.event.transform.k
       });
+     //Remove this comment once d3 bug is solved  this.ignoreLastZoom = false;
     };
   
     loadMaps(mapDOMId) {
@@ -364,8 +383,11 @@ class D3Map extends React.Component {
         .attr('width', '100%')
         .attr('height', '100%');
   
+      
+      this.featuresParent = this.svg.append('g');
+
       // Group for the map features
-      this.featuresGlobal = this.svg.append('g')
+      this.featuresGlobal = this.featuresParent.append('g')
         .attr('class', 'features');
 
   
@@ -373,10 +395,16 @@ class D3Map extends React.Component {
       // Change [1,Infinity] to adjust the min/max zoom scale
       this.zoom = window.d3.zoom()
         .scaleExtent([this.minimalZoom, mapData.zoomMax])
+        .filter(() => {
+          console.log("");
+          //setTimeout(() =>{}, 1);
+          return !((d3.event.type === 'touchstart' && d3.event.touches.length <= 1) || (d3.event.type === 'touchmove' && d3.event.touches.length <= 1)  || (d3.event.type === 'touchend' && d3.event.touches.length <= 1) ) ;
+        })
         .on('end', this.zoomEnd)
         .on('zoom', this.zoomed);
   
-      this.svg.call(this.zoom);
+      this.featuresParent.call(this.zoom);
+        //.on("touchstart", () => {window.d3.event.preventDefault(); console.log('touch detected');});
   
       const assignRidingClass = (data) => `${this.fillRidingsWithLeadingPartyColor(data.properties.EDNumber20)}`;
   

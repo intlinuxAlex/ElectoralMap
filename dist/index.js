@@ -946,6 +946,7 @@ function (_React$Component) {
     _this.minimalZoom = 1;
     _this.mediumThreshold = 1024;
     _this.featuresGlobal = null;
+    _this.featuresParent = null;
     _this.path = null;
     _this.projection = null;
     _this.svg = null;
@@ -1179,10 +1180,22 @@ function (_React$Component) {
     key: "zoomed",
     value: function zoomed() {
       var allowZoom = this.props.allowZoom;
+      var BREAKPOINTS = stylingConstants.BREAKPOINTS;
+      var bp = BREAKPOINTS;
 
       if (allowZoom) {
+        //TUECA  if (!window.d3.event.sourceEvent // situation d'un clic sur une circonscription
+        //TUECA     || window.innerWidth > bp.SM.max // on est plus en mobile, comportement habituel
+        //TUECA     || (window.innerWidth <= bp.SM.max && window.d3.event.sourceEvent && window.d3.event.sourceEvent.touches && window.d3.event.sourceEvent.touches.length > 1)) { // on est en mobile et un event a un doigt
         this.featuresGlobal.attr('transform', window.d3.event.transform).selectAll('path').style('stroke-width', "".concat(Math.max(0.01, 1 / (window.d3.event.transform.k * 2)), "px")); // updated for d3 v4
-      }
+      } //TUECA    else {
+      //TUECA     this.ignoreLastZoom = true;
+      //window.d3.event.stopPropagation();
+      //TUECA     return null;
+      //window.d3.event.sourceEvent.preventDefault();
+      //TUECA    }
+      //TUECA }
+
     }
   }, {
     key: "zoomToInitialSize",
@@ -1202,11 +1215,13 @@ function (_React$Component) {
       var allowZoom = this.props.allowZoom;
       this.latestTransform = window.d3.event.transform;
 
-      if (!allowZoom) {
-        window.d3.event.transform.x = 0;
-        window.d3.event.transform.y = 0;
-        window.d3.event.transform.k = 1;
-      }
+      if (!allowZoom
+      /*TUECA || this.ignoreLastZoom*/
+      ) {
+          window.d3.event.transform.x = 0;
+          window.d3.event.transform.y = 0;
+          window.d3.event.transform.k = 1;
+        }
 
       this.featuresGlobal.selectAll('path').style('stroke-width', "".concat(Math.max(0.01, 1 / (window.d3.event.transform.k * 2)), "px"));
       this.setState({
@@ -1215,7 +1230,7 @@ function (_React$Component) {
           transformY: window.d3.event.transform.y
         },
         currentZoom: window.d3.event.transform.k
-      });
+      }); //TUECA  this.ignoreLastZoom = false;
     }
   }, {
     key: "loadMaps",
@@ -1272,13 +1287,18 @@ function (_React$Component) {
 
       this.path = window.d3.geoPath().projection(this.projection); // Create an SVG
 
-      this.svg = window.d3.select("#".concat(mapDOMId)).attr('width', '100%').attr('height', '100%'); // Group for the map features
+      this.svg = window.d3.select("#".concat(mapDOMId)).attr('width', '100%').attr('height', '100%');
+      this.featuresParent = this.svg.append('g'); // Group for the map features
 
-      this.featuresGlobal = this.svg.append('g').attr('class', 'features'); // Create zoom/pan listener
+      this.featuresGlobal = this.featuresParent.append('g').attr('class', 'features'); // Create zoom/pan listener
       // Change [1,Infinity] to adjust the min/max zoom scale
 
-      this.zoom = window.d3.zoom().scaleExtent([this.minimalZoom, mapData.zoomMax]).on('end', this.zoomEnd).on('zoom', this.zoomed);
-      this.svg.call(this.zoom);
+      this.zoom = window.d3.zoom().scaleExtent([this.minimalZoom, mapData.zoomMax]).filter(function () {
+        console.log(""); //setTimeout(() =>{}, 1);
+
+        return !(d3.event.type === 'touchstart' && d3.event.touches.length <= 1 || d3.event.type === 'touchmove' && d3.event.touches.length <= 1 || d3.event.type === 'touchend' && d3.event.touches.length <= 1);
+      }).on('end', this.zoomEnd).on('zoom', this.zoomed);
+      this.featuresParent.call(this.zoom); //.on("touchstart", () => {window.d3.event.preventDefault(); console.log('touch detected');});
 
       var assignRidingClass = function assignRidingClass(data) {
         return "".concat(_this3.fillRidingsWithLeadingPartyColor(data.properties.EDNumber20));
@@ -1399,14 +1419,14 @@ function (_React$Component) {
     /*
     
     À l'intention de Véronique Leclerc
-     Salut Vero! La composante est prete a recevoir le bouton zoomIn et zoomOut.
-     2 petites infos.
+      Salut Vero! La composante est prete a recevoir le bouton zoomIn et zoomOut.
+      2 petites infos.
       La fonctionnalité des boutons se nomme this.incrementZoom et this.decrementZoom;
       La variable qui dit aux boutons de se griser se nomme this.disableZoomIn et this.disableZoomOut
-                 <button style={LeStylingMagnifique} onClick={this.incrementZoom}>
+                  <button style={LeStylingMagnifique} onClick={this.incrementZoom}>
                   MAUDIT BEAU BOUTON PLUS
                 </button>
-     */
+      */
 
   }, {
     key: "render",
