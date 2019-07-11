@@ -20,6 +20,8 @@ class D3Map extends React.Component {
           transformY: 0,
         },
         currentZoom: 1,
+        disableZoomOut: true,
+        disableZoomIn: false,
       };
 
       this.minimalZoom = 1;
@@ -38,8 +40,6 @@ class D3Map extends React.Component {
       this.zoomEnd = this.zoomEnd.bind(this);
       this.roundUpNextPowerOfTwo = this.roundUpNextPowerOfTwo.bind(this);
       this.roundDownNextPowerOfTwo = this.roundDownNextPowerOfTwo.bind(this);
-      this.disableZoomOut = false;
-      this.disableZoomIn = false;
       this.decrementZoom = this.decrementZoom.bind(this);
       this.incrementZoom = this.incrementZoom.bind(this);
       this.zoomToInitialSize = this.zoomToInitialSize.bind(this);
@@ -110,7 +110,7 @@ class D3Map extends React.Component {
         margin-bottom: 20px;
       `
 
-      if (window && props.isEditMode) {
+      if (typeof window !== 'undefined' && props.isEditMode) {
         window.D3ElectoralMap = window.D3ElectoralMap || {};
         window.D3ElectoralMap[props.mapId] = this;
       }
@@ -302,6 +302,10 @@ class D3Map extends React.Component {
       if (setCurrentRidingThroughMap) {
         setCurrentRidingThroughMap(-1, (E6N_PAGE_IDS && E6N_PAGE_IDS.lists ? E6N_PAGE_IDS.lists: null));
       }
+      this.setState({
+        disableZoomIn: false,
+        disableZoomOut: true
+      });
     }
 
     zoomEnd() {
@@ -500,42 +504,70 @@ class D3Map extends React.Component {
     }
 
     roundDownNextPowerOfTwo(currentZoom) {
+      if (currentZoom === 2) return this.enableZoomButtons(1);
       const {
         mapData
       } = this.props;
+
 
       let power = 0;
       for (let i = 1; i < mapData.zoomMax; i++) {
         power = Math.pow(2, i);
         if (power > currentZoom) {
           if (power <= this.minimalZoom) {
-            this.disableZoomOut = true; 
+            return this.enableZoomButtons(this.minimalZoom);
           }
-          this.disableZoomOut = false;
-          return power/2; 
+          return this.enableZoomButtons(power/2); 
         }
       }
     }
 
     roundUpNextPowerOfTwo(currentZoom) {
-      if (currentZoom === 1) return 2;
+      if (currentZoom === 1) return this.enableZoomButtons(2);
 
       const {
         mapData
       } = this.props;
 
+      debugger;
       let power = 0;
       for (let i = 1; i < mapData.zoomMax; i++) {
         power = Math.pow(2, i);
         if (power > currentZoom) {
           if (power >= mapData.zoomMax) {
-            this.disableZoomIn = true; 
-            return mapData.zoomMax;
+            return this.enableZoomButtons(mapData.zoomMax);
           }
-          this.disableZoomIn = false;
-          return power;
+          return this.enableZoomButtons(power);
         }
       }
+    }
+
+    enableZoomButtons(futureZoom) {
+      const {
+        mapData
+      } = this.props;
+
+      let disableZoomIn = false;
+      let disableZoomOut = false;
+
+      if (futureZoom >= mapData.zoomMax ){
+        disableZoomIn = true;
+      } else {
+        disableZoomIn = false;
+      }
+      
+      if (futureZoom <= this.minimalZoom) {
+        disableZoomOut = true; 
+      } else {
+        disableZoomOut = false;
+      }
+
+      this.setState({
+        disableZoomIn: disableZoomIn,
+        disableZoomOut: disableZoomOut
+      });
+
+      return futureZoom;
     }
 
     render() {
@@ -589,7 +621,7 @@ class D3Map extends React.Component {
                   <StyledZoomingButtonsContainer>
                     <Button
                       icon="svg-plus"
-                      isDisabled={this.disableZoomIn}
+                      isDisabled={this.state.disableZoomIn}
                       isIconFlag
                       onClick={this.incrementZoom}
                       scope="secondary"
@@ -597,7 +629,7 @@ class D3Map extends React.Component {
                     />
                     <Button
                       icon="svg-minus"
-                      isDisabled={this.disableZoomOut}
+                      isDisabled={this.state.disableZoomOut}
                       isIconFlag
                       onClick={this.decrementZoom}
                       scope="secondary"

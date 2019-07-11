@@ -862,7 +862,9 @@ function (_React$Component) {
         transformX: 0,
         transformY: 0
       },
-      currentZoom: 1
+      currentZoom: 1,
+      disableZoomOut: true,
+      disableZoomIn: false
     };
     _this.minimalZoom = 1;
     _this.mediumThreshold = 1024;
@@ -879,8 +881,6 @@ function (_React$Component) {
     _this.zoomEnd = _this.zoomEnd.bind(_assertThisInitialized(_this));
     _this.roundUpNextPowerOfTwo = _this.roundUpNextPowerOfTwo.bind(_assertThisInitialized(_this));
     _this.roundDownNextPowerOfTwo = _this.roundDownNextPowerOfTwo.bind(_assertThisInitialized(_this));
-    _this.disableZoomOut = false;
-    _this.disableZoomIn = false;
     _this.decrementZoom = _this.decrementZoom.bind(_assertThisInitialized(_this));
     _this.incrementZoom = _this.incrementZoom.bind(_assertThisInitialized(_this));
     _this.zoomToInitialSize = _this.zoomToInitialSize.bind(_assertThisInitialized(_this));
@@ -903,7 +903,7 @@ function (_React$Component) {
     _this.StyledButtonsContainer = styled.div(_templateObject2(), mediaQueries.mediaMax(bp.XS.max, "\n          right: 20px;\n        "), mediaQueries.mediaMin(bp.SM.min, "\n          left: 20px;\n        "), colorsPalette.colorsDx.black);
     _this.StyledZoomingButtonsContainer = styled.div(_templateObject3());
 
-    if (window && props.isEditMode) {
+    if (typeof window !== 'undefined' && props.isEditMode) {
       window.D3ElectoralMap = window.D3ElectoralMap || {};
       window.D3ElectoralMap[props.mapId] = _assertThisInitialized(_this);
     }
@@ -1116,6 +1116,11 @@ function (_React$Component) {
       if (setCurrentRidingThroughMap) {
         setCurrentRidingThroughMap(-1, E6N_PAGE_IDS && E6N_PAGE_IDS.lists ? E6N_PAGE_IDS.lists : null);
       }
+
+      this.setState({
+        disableZoomIn: false,
+        disableZoomOut: true
+      });
     }
   }, {
     key: "zoomEnd",
@@ -1280,6 +1285,7 @@ function (_React$Component) {
   }, {
     key: "roundDownNextPowerOfTwo",
     value: function roundDownNextPowerOfTwo(currentZoom) {
+      if (currentZoom === 2) return this.enableZoomButtons(1);
       var mapData = this.props.mapData;
       var power = 0;
 
@@ -1288,19 +1294,19 @@ function (_React$Component) {
 
         if (power > currentZoom) {
           if (power <= this.minimalZoom) {
-            this.disableZoomOut = true;
+            return this.enableZoomButtons(this.minimalZoom);
           }
 
-          this.disableZoomOut = false;
-          return power / 2;
+          return this.enableZoomButtons(power / 2);
         }
       }
     }
   }, {
     key: "roundUpNextPowerOfTwo",
     value: function roundUpNextPowerOfTwo(currentZoom) {
-      if (currentZoom === 1) return 2;
+      if (currentZoom === 1) return this.enableZoomButtons(2);
       var mapData = this.props.mapData;
+      debugger;
       var power = 0;
 
       for (var i = 1; i < mapData.zoomMax; i++) {
@@ -1308,14 +1314,37 @@ function (_React$Component) {
 
         if (power > currentZoom) {
           if (power >= mapData.zoomMax) {
-            this.disableZoomIn = true;
-            return mapData.zoomMax;
+            return this.enableZoomButtons(mapData.zoomMax);
           }
 
-          this.disableZoomIn = false;
-          return power;
+          return this.enableZoomButtons(power);
         }
       }
+    }
+  }, {
+    key: "enableZoomButtons",
+    value: function enableZoomButtons(futureZoom) {
+      var mapData = this.props.mapData;
+      var disableZoomIn = false;
+      var disableZoomOut = false;
+
+      if (futureZoom >= mapData.zoomMax) {
+        disableZoomIn = true;
+      } else {
+        disableZoomIn = false;
+      }
+
+      if (futureZoom <= this.minimalZoom) {
+        disableZoomOut = true;
+      } else {
+        disableZoomOut = false;
+      }
+
+      this.setState({
+        disableZoomIn: disableZoomIn,
+        disableZoomOut: disableZoomOut
+      });
+      return futureZoom;
     }
   }, {
     key: "render",
@@ -1355,14 +1384,14 @@ function (_React$Component) {
           forwardTooltipRef: this.childTooltipRef
         }), Button && React.createElement(StyledButtonsContainer, null, React.createElement(StyledZoomingButtonsContainer, null, React.createElement(Button, {
           icon: "svg-plus",
-          isDisabled: this.disableZoomIn,
+          isDisabled: this.state.disableZoomIn,
           isIconFlag: true,
           onClick: this.incrementZoom,
           scope: "secondary",
           type: "button"
         }), React.createElement(Button, {
           icon: "svg-minus",
-          isDisabled: this.disableZoomOut,
+          isDisabled: this.state.disableZoomOut,
           isIconFlag: true,
           onClick: this.decrementZoom,
           scope: "secondary",
