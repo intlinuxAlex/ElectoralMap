@@ -375,7 +375,7 @@ class D3Map extends React.Component {
       this.zoom = window.d3.zoom()
         .scaleExtent([this.minimalZoom, mapData.zoomMax])
         .filter(() => {
-          return !(d3.event.type==='wheel' && !d3.event.ctrlKey && isWidget)
+          return !(d3.event.type==='wheel' && (!d3.event.ctrlKey || !d3.event.metaKey) && isWidget)
         }) 
         .on('end', this.zoomEnd)
         .on('zoom', this.zoomed);
