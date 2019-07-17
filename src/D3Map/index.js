@@ -326,6 +326,7 @@ class D3Map extends React.Component {
         },
         currentZoom: window.d3.event.transform.k
       });
+      this.enableZoomButtons(window.d3.event.transform.k);
     };
   
     loadMaps(mapDOMId) {
@@ -509,7 +510,6 @@ class D3Map extends React.Component {
         mapData
       } = this.props;
 
-
       let power = 0;
       for (let i = 1; i < mapData.zoomMax; i++) {
         power = Math.pow(2, i);
@@ -529,7 +529,6 @@ class D3Map extends React.Component {
         mapData
       } = this.props;
 
-      debugger;
       let power = 0;
       for (let i = 1; i < mapData.zoomMax; i++) {
         power = Math.pow(2, i);

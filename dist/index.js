@@ -1142,6 +1142,7 @@ function (_React$Component) {
         },
         currentZoom: window.d3.event.transform.k
       });
+      this.enableZoomButtons(window.d3.event.transform.k);
     }
   }, {
     key: "loadMaps",
@@ -1306,7 +1307,6 @@ function (_React$Component) {
     value: function roundUpNextPowerOfTwo(currentZoom) {
       if (currentZoom === 1) return this.enableZoomButtons(2);
       var mapData = this.props.mapData;
-      debugger;
       var power = 0;
 
       for (var i = 1; i < mapData.zoomMax; i++) {
