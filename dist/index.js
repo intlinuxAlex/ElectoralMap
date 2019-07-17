@@ -1388,20 +1388,23 @@ function (_React$Component) {
           isIconFlag: true,
           onClick: this.incrementZoom,
           scope: "secondary",
-          type: "button"
+          type: "button",
+          title: "Zoom avant"
         }), React.createElement(Button, {
           icon: "svg-minus",
           isDisabled: this.state.disableZoomOut,
           isIconFlag: true,
           onClick: this.decrementZoom,
           scope: "secondary",
-          type: "button"
+          type: "button",
+          title: "Zoom arri\xE8re"
         })), React.createElement(Button, {
           icon: "svg-zoomout",
           isIconFlag: true,
           onClick: this.zoomToInitialSize,
           scope: "secondary",
           type: "button",
+          title: "R\xE9initialiser",
           isDisabled: !(currentZoom > zoomThresholds.Z || currentPan && (Math.abs(currentPan.transformX) > zoomThresholds.X || Math.abs(currentPan.transformY) > zoomThresholds.Y))
         })), React.createElement(D3MapRenderer, {
           allowClick: allowClick,

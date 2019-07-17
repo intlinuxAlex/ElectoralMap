@@ -625,6 +625,7 @@ class D3Map extends React.Component {
                       onClick={this.incrementZoom}
                       scope="secondary"
                       type="button"
+                      title="Zoom avant"
                     />
                     <Button
                       icon="svg-minus"
@@ -633,6 +634,7 @@ class D3Map extends React.Component {
                       onClick={this.decrementZoom}
                       scope="secondary"
                       type="button"
+                      title="Zoom arrière"
                     />
                   </StyledZoomingButtonsContainer>
                   <Button
@@ -641,6 +643,7 @@ class D3Map extends React.Component {
                     onClick={this.zoomToInitialSize}
                     scope="secondary"
                     type="button"
+                    title="Réinitialiser"
                     isDisabled={!(currentZoom > zoomThresholds.Z ||(currentPan && (Math.abs(currentPan.transformX) > zoomThresholds.X || Math.abs(currentPan.transformY) > zoomThresholds.Y)))}
                   />
                 </StyledButtonsContainer>
