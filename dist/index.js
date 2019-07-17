@@ -784,7 +784,7 @@ function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try
 function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
 
 function _templateObject3() {
-  var data = _taggedTemplateLiteral(["\n        margin-bottom: 20px;\n      "]);
+  var data = _taggedTemplateLiteral(["\n        margin-bottom: 20px;\n\n        .e-button {\n          &:first-child {\n            border-bottom-left-radius: 0;\n            border-bottom-right-radius: 0;\n          }\n\n          &:last-child {\n            border-top-left-radius: 0;\n            border-top-right-radius: 0;\n          }\n        }\n      "]);
 
   _templateObject3 = function _templateObject3() {
     return data;
@@ -1389,7 +1389,8 @@ function (_React$Component) {
           onClick: this.incrementZoom,
           scope: "secondary",
           type: "button",
-          title: "Zoom avant"
+          title: "Zoom avant",
+          label: "Zoom avant"
         }), React.createElement(Button, {
           icon: "svg-minus",
           isDisabled: this.state.disableZoomOut,
@@ -1397,7 +1398,8 @@ function (_React$Component) {
           onClick: this.decrementZoom,
           scope: "secondary",
           type: "button",
-          title: "Zoom arri\xE8re"
+          title: "Zoom arri\xE8re",
+          label: "Zoom arri\xE8re"
         })), React.createElement(Button, {
           icon: "svg-zoomout",
           isIconFlag: true,
@@ -1405,6 +1407,7 @@ function (_React$Component) {
           scope: "secondary",
           type: "button",
           title: "R\xE9initialiser",
+          label: "R\xE9initialiser",
           isDisabled: !(currentZoom > zoomThresholds.Z || currentPan && (Math.abs(currentPan.transformX) > zoomThresholds.X || Math.abs(currentPan.transformY) > zoomThresholds.Y))
         })), React.createElement(D3MapRenderer, {
           allowClick: allowClick,

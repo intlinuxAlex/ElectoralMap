@@ -108,6 +108,18 @@ class D3Map extends React.Component {
 
       this.StyledZoomingButtonsContainer = styled.div`
         margin-bottom: 20px;
+
+        .e-button {
+          &:first-child {
+            border-bottom-left-radius: 0;
+            border-bottom-right-radius: 0;
+          }
+
+          &:last-child {
+            border-top-left-radius: 0;
+            border-top-right-radius: 0;
+          }
+        }
       `
 
       if (typeof window !== 'undefined' && props.isEditMode) {
@@ -626,6 +638,7 @@ class D3Map extends React.Component {
                       scope="secondary"
                       type="button"
                       title="Zoom avant"
+                      label="Zoom avant"
                     />
                     <Button
                       icon="svg-minus"
@@ -635,6 +648,7 @@ class D3Map extends React.Component {
                       scope="secondary"
                       type="button"
                       title="Zoom arrière"
+                      label="Zoom arrière"
                     />
                   </StyledZoomingButtonsContainer>
                   <Button
@@ -644,6 +658,7 @@ class D3Map extends React.Component {
                     scope="secondary"
                     type="button"
                     title="Réinitialiser"
+                    label="Réinitialiser"
                     isDisabled={!(currentZoom > zoomThresholds.Z ||(currentPan && (Math.abs(currentPan.transformX) > zoomThresholds.X || Math.abs(currentPan.transformY) > zoomThresholds.Y)))}
                   />
                 </StyledButtonsContainer>
