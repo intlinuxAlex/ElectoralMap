@@ -1109,12 +1109,13 @@ function (_React$Component) {
     key: "zoomToInitialSize",
     value: function zoomToInitialSize() {
       var _this$props2 = this.props,
+          electionId = _this$props2.electionId,
           setCurrentRidingThroughMap = _this$props2.setCurrentRiding,
           E6N_PAGE_IDS = _this$props2.E6N_PAGE_IDS;
       this.svg.transition().duration(750).call(this.zoomTransform, window.d3.zoomIdentity);
 
       if (setCurrentRidingThroughMap) {
-        setCurrentRidingThroughMap(-1, E6N_PAGE_IDS && E6N_PAGE_IDS.lists ? E6N_PAGE_IDS.lists : null);
+        setCurrentRidingThroughMap(electionId, -1, E6N_PAGE_IDS && E6N_PAGE_IDS.lists ? E6N_PAGE_IDS.lists : null);
       }
 
       this.setState({
@@ -1151,6 +1152,7 @@ function (_React$Component) {
 
       var _this$props3 = this.props,
           cornersCoordinates = _this$props3.cornersCoordinates,
+          electionId = _this$props3.electionId,
           setCurrentRidingThroughMap = _this$props3.setCurrentRiding,
           mapData = _this$props3.mapData,
           mapDOMContextId = _this$props3.mapDOMContextId,
@@ -1212,25 +1214,35 @@ function (_React$Component) {
       };
 
       var handleMouseOver = function handleMouseOver(d, i) {
-        var setCurrentRidingTooltipAction = _this3.props.setCurrentRidingTooltip;
+        var _this3$props = _this3.props,
+            electionId = _this3$props.electionId,
+            setCurrentRidingTooltipAction = _this3$props.setCurrentRidingTooltip;
 
         if (setCurrentRidingTooltipAction) {
           var htmlNode = document.getElementsByTagName('html');
 
           if (window.innerWidth >= _this3.mediumThreshold && htmlNode && htmlNode[0] && (htmlNode[0].className.indexOf('ipad') < 0 || htmlNode[0].className.indexOf('tablet') < 0)) {
-            setCurrentRidingTooltipAction(d.properties.EDNumber20 ? d.properties.EDNumber20 : i + e6nHardcodedRidingIdFix);
+            setCurrentRidingTooltipAction({
+              id: electionId,
+              data: d.properties.EDNumber20 ? d.properties.EDNumber20 : i + e6nHardcodedRidingIdFix
+            });
           }
         }
       };
 
       var handleMouseOut = function handleMouseOut() {
-        var setCurrentRidingTooltipAction = _this3.props.setCurrentRidingTooltip;
+        var _this3$props2 = _this3.props,
+            electionId = _this3$props2.electionId,
+            setCurrentRidingTooltipAction = _this3$props2.setCurrentRidingTooltip;
 
         if (setCurrentRidingTooltipAction) {
           var htmlNode = document.getElementsByTagName('html');
 
           if (window.innerWidth >= _this3.mediumThreshold && htmlNode && htmlNode[0] && (htmlNode[0].className.indexOf('ipad') < 0 || htmlNode[0].className.indexOf('tablet') < 0)) {
-            setCurrentRidingTooltipAction(-1);
+            setCurrentRidingTooltipAction({
+              id: electionId,
+              data: -1
+            });
           }
         }
       }; // Déplacer ce code dans le componentDidUpdate avec un check sur le mapData.mapUrl changed.
@@ -1250,7 +1262,7 @@ function (_React$Component) {
           return data.properties.EDNumber20;
         }).on('click', function (polygon) {
           if (setCurrentRidingThroughMap) {
-            setCurrentRidingThroughMap(polygon.properties.EDNumber20 + e6nHardcodedRidingIdFix, E6N_PAGE_IDS && E6N_PAGE_IDS.lists ? E6N_PAGE_IDS.lists : null);
+            setCurrentRidingThroughMap(electionId, polygon.properties.EDNumber20 + e6nHardcodedRidingIdFix, E6N_PAGE_IDS && E6N_PAGE_IDS.lists ? E6N_PAGE_IDS.lists : null);
           }
         }).on('mouseover', handleMouseOver).on('mouseout', handleMouseOut);
 
@@ -1381,7 +1393,8 @@ function (_React$Component) {
           ref: forwardMapRef,
           id: mapId
         }, E6NToolTip && React.createElement(E6NToolTip, {
-          forwardTooltipRef: this.childTooltipRef
+          forwardTooltipRef: this.childTooltipRef,
+          electionId: electionId
         }), Button && React.createElement(StyledButtonsContainer, null, React.createElement(StyledZoomingButtonsContainer, null, React.createElement(Button, {
           icon: "svg-plus",
           isDisabled: this.state.disableZoomIn,
