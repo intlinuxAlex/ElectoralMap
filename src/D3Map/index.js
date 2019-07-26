@@ -184,7 +184,7 @@ class D3Map extends React.Component {
         allRidings,
         e6nHardcodedRidingIdFix,
       } = this.props;
-  
+
       const riding = allRidings ? allRidings[featureId + e6nHardcodedRidingIdFix] : null;
 
       if (riding) {
@@ -307,12 +307,13 @@ class D3Map extends React.Component {
   
     zoomToInitialSize() {
       const {
+        electionId,
         setCurrentRiding: setCurrentRidingThroughMap,
         E6N_PAGE_IDS
       } = this.props;
       this.svg.transition().duration(750).call(this.zoomTransform, window.d3.zoomIdentity);
       if (setCurrentRidingThroughMap) {
-        setCurrentRidingThroughMap(-1, (E6N_PAGE_IDS && E6N_PAGE_IDS.lists ? E6N_PAGE_IDS.lists: null));
+        setCurrentRidingThroughMap(electionId, -1, (E6N_PAGE_IDS && E6N_PAGE_IDS.lists ? E6N_PAGE_IDS.lists: null));
       }
       this.setState({
         disableZoomIn: false,
@@ -344,6 +345,7 @@ class D3Map extends React.Component {
     loadMaps(mapDOMId) {
       const {
         cornersCoordinates,
+        electionId,
         setCurrentRiding: setCurrentRidingThroughMap,
         mapData,
         mapDOMContextId,
@@ -426,26 +428,28 @@ class D3Map extends React.Component {
   
       const handleMouseOver = (d, i) => {
         const {
+          electionId,
           setCurrentRidingTooltip: setCurrentRidingTooltipAction,
         } = this.props;
         
         if (setCurrentRidingTooltipAction) {
           const htmlNode = document.getElementsByTagName('html');
           if (window.innerWidth >= this.mediumThreshold && htmlNode && htmlNode[0] && (htmlNode[0].className.indexOf('ipad') < 0 || htmlNode[0].className.indexOf('tablet') < 0)) {
-            setCurrentRidingTooltipAction(d.properties.EDNumber20 ? d.properties.EDNumber20 : i + e6nHardcodedRidingIdFix);
+            setCurrentRidingTooltipAction({ id: electionId, data: d.properties.EDNumber20 ? d.properties.EDNumber20 : i + e6nHardcodedRidingIdFix});
           }
         }
       };
   
       const handleMouseOut = () => {
         const {
+          electionId,
           setCurrentRidingTooltip: setCurrentRidingTooltipAction,
         } = this.props;
         
         if (setCurrentRidingTooltipAction) {
           const htmlNode = document.getElementsByTagName('html');
           if (window.innerWidth >= this.mediumThreshold && htmlNode && htmlNode[0] && (htmlNode[0].className.indexOf('ipad') < 0 || htmlNode[0].className.indexOf('tablet') < 0)) {
-            setCurrentRidingTooltipAction(-1);
+            setCurrentRidingTooltipAction({ id: electionId, data:-1});
           }
         }
       };
@@ -468,7 +472,7 @@ class D3Map extends React.Component {
           .attr('id', (data) => data.properties.EDNumber20)
           .on('click', (polygon) => {
             if (setCurrentRidingThroughMap) {
-              setCurrentRidingThroughMap(polygon.properties.EDNumber20 + e6nHardcodedRidingIdFix, (E6N_PAGE_IDS && E6N_PAGE_IDS.lists ? E6N_PAGE_IDS.lists: null));
+              setCurrentRidingThroughMap(electionId, polygon.properties.EDNumber20 + e6nHardcodedRidingIdFix, (E6N_PAGE_IDS && E6N_PAGE_IDS.lists ? E6N_PAGE_IDS.lists: null));
             }
           })
           .on('mouseover', handleMouseOver)
@@ -623,6 +627,7 @@ class D3Map extends React.Component {
               E6NToolTip && (
                 <E6NToolTip
                   forwardTooltipRef={this.childTooltipRef}
+                  electionId={electionId}
                 />
               )
             }
