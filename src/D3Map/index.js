@@ -47,10 +47,8 @@ class D3Map extends React.Component {
       this.GetCornerCoordinates = this.GetCornerCoordinates.bind(this);
       this.getVisibleArea = this.getVisibleArea.bind(this);
   
-      this.latestTransform = null;
-
       this.allowZoomButtonsWhileTransitioning = true; 
-
+      this.latestTransform = null;   
       this.childTooltipRef = React.createRef();
 
       const {
@@ -66,7 +64,6 @@ class D3Map extends React.Component {
         colorsPalette,
         mediaQueries,
       } = stylingConstants;
-
 
       const bp = BREAKPOINTS;
 
@@ -496,8 +493,10 @@ class D3Map extends React.Component {
         const desiredScale = this.roundUpNextPowerOfTwo(currentZoom ? currentZoom : 1);
         this.svg.transition()
           .duration(400)
-          .call(this.zoom.scaleTo, desiredScale);
-        this.allowZoomButtonsWhileTransitioning = true;
+          .call(this.zoom.scaleTo, desiredScale)
+          .on("end", () =>{
+            this.allowZoomButtonsWhileTransitioning = true;
+          });
       }
     }
 
@@ -515,8 +514,11 @@ class D3Map extends React.Component {
         const desiredScale = this.roundDownNextPowerOfTwo(currentZoom-1 ? currentZoom-1 : 1);
         this.svg.transition()
           .duration(400)
-          .call(this.zoom.scaleTo, desiredScale);
-        this.allowZoomButtonsWhileTransitioning = true;
+          .call(this.zoom.scaleTo, desiredScale)
+          .on("end", () =>{
+            this.allowZoomButtonsWhileTransitioning = true;
+          } );
+        
       }
     }
 
@@ -636,7 +638,7 @@ class D3Map extends React.Component {
                 <StyledButtonsContainer>
                   <StyledZoomingButtonsContainer>
                     <Button
-                      icon="svg-plus"
+                      icon="svg-min_plus"
                       isDisabled={this.state.disableZoomIn}
                       isIconFlag
                       onClick={this.incrementZoom}
@@ -646,7 +648,7 @@ class D3Map extends React.Component {
                       label="Zoom avant"
                     />
                     <Button
-                      icon="svg-minus"
+                      icon="svg-min_minus"
                       isDisabled={this.state.disableZoomOut}
                       isIconFlag
                       onClick={this.decrementZoom}
