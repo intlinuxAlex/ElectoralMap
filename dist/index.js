@@ -887,8 +887,8 @@ function (_React$Component) {
     _this.loadMaps = _this.loadMaps.bind(_assertThisInitialized(_this));
     _this.GetCornerCoordinates = _this.GetCornerCoordinates.bind(_assertThisInitialized(_this));
     _this.getVisibleArea = _this.getVisibleArea.bind(_assertThisInitialized(_this));
-    _this.latestTransform = null;
     _this.allowZoomButtonsWhileTransitioning = true;
+    _this.latestTransform = null;
     _this.childTooltipRef = React.createRef();
     var styledComponents = _this.props.styledComponents;
     var styled = styledComponents.styled;
@@ -1272,27 +1272,33 @@ function (_React$Component) {
   }, {
     key: "incrementZoom",
     value: function incrementZoom() {
+      var _this4 = this;
+
       var allowZoom = this.props.allowZoom;
       var currentZoom = this.state.currentZoom;
 
       if (allowZoom && this.allowZoomButtonsWhileTransitioning) {
         this.allowZoomButtonsWhileTransitioning = false;
         var desiredScale = this.roundUpNextPowerOfTwo(currentZoom ? currentZoom : 1);
-        this.svg.transition().duration(400).call(this.zoom.scaleTo, desiredScale);
-        this.allowZoomButtonsWhileTransitioning = true;
+        this.svg.transition().duration(400).call(this.zoom.scaleTo, desiredScale).on("end", function () {
+          _this4.allowZoomButtonsWhileTransitioning = true;
+        });
       }
     }
   }, {
     key: "decrementZoom",
     value: function decrementZoom() {
+      var _this5 = this;
+
       var allowZoom = this.props.allowZoom;
       var currentZoom = this.state.currentZoom;
 
       if (allowZoom && this.allowZoomButtonsWhileTransitioning) {
         this.allowZoomButtonsWhileTransitioning = false;
         var desiredScale = this.roundDownNextPowerOfTwo(currentZoom - 1 ? currentZoom - 1 : 1);
-        this.svg.transition().duration(400).call(this.zoom.scaleTo, desiredScale);
-        this.allowZoomButtonsWhileTransitioning = true;
+        this.svg.transition().duration(400).call(this.zoom.scaleTo, desiredScale).on("end", function () {
+          _this5.allowZoomButtonsWhileTransitioning = true;
+        });
       }
     }
   }, {
@@ -1361,7 +1367,7 @@ function (_React$Component) {
   }, {
     key: "render",
     value: function render() {
-      var _this4 = this;
+      var _this6 = this;
 
       var _this$state = this.state,
           isReady = _this$state.isReady,
@@ -1396,7 +1402,7 @@ function (_React$Component) {
           forwardTooltipRef: this.childTooltipRef,
           electionId: electionId
         }), Button && React.createElement(StyledButtonsContainer, null, React.createElement(StyledZoomingButtonsContainer, null, React.createElement(Button, {
-          icon: "svg-plus",
+          icon: "svg-min_plus",
           isDisabled: this.state.disableZoomIn,
           isIconFlag: true,
           onClick: this.incrementZoom,
@@ -1405,7 +1411,7 @@ function (_React$Component) {
           title: "Zoom avant",
           label: "Zoom avant"
         }), React.createElement(Button, {
-          icon: "svg-minus",
+          icon: "svg-min_minus",
           isDisabled: this.state.disableZoomOut,
           isIconFlag: true,
           onClick: this.decrementZoom,
@@ -1429,7 +1435,7 @@ function (_React$Component) {
           currentRidingId: currentRidingId,
           initializeMap: this.loadMaps,
           onMouseMove: function onMouseMove(event) {
-            return _this4.onMouseMove(event);
+            return _this6.onMouseMove(event);
           },
           focusRiding: this.focusOnRiding,
           e6nHardcodedRidingIdFix: e6nHardcodedRidingIdFix,
