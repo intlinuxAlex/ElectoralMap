@@ -1,9 +1,13 @@
 const React = require('react');
-const Component = require('react');
 const stylingConstants = require('../lib/styled/stylingpackage');
 const classNames = require('classnames/dedupe');
 const D3MapRenderer = require('../D3MapRenderer');
-const D3MapZoomButton = require('../D3MapZoomButton');
+
+const zoomThresholds = {
+  X: 50,
+  Y: 50,
+  Z: 1,
+};
 
 class D3Map extends React.Component {
     constructor(props) {
@@ -16,6 +20,8 @@ class D3Map extends React.Component {
           transformY: 0,
         },
         currentZoom: 1,
+        disableZoomOut: true,
+        disableZoomIn: false,
       };
 
       this.minimalZoom = 1;
@@ -34,8 +40,6 @@ class D3Map extends React.Component {
       this.zoomEnd = this.zoomEnd.bind(this);
       this.roundUpNextPowerOfTwo = this.roundUpNextPowerOfTwo.bind(this);
       this.roundDownNextPowerOfTwo = this.roundDownNextPowerOfTwo.bind(this);
-      this.disableZoomOut = false;
-      this.disableZoomIn = false;
       this.decrementZoom = this.decrementZoom.bind(this);
       this.incrementZoom = this.incrementZoom.bind(this);
       this.zoomToInitialSize = this.zoomToInitialSize.bind(this);
@@ -43,14 +47,11 @@ class D3Map extends React.Component {
       this.GetCornerCoordinates = this.GetCornerCoordinates.bind(this);
       this.getVisibleArea = this.getVisibleArea.bind(this);
   
-      this.latestTransform = null;
-
       this.allowZoomButtonsWhileTransitioning = true; 
-
+      this.latestTransform = null;   
       this.childTooltipRef = React.createRef();
 
       const {
-        isRidingOpen,
         styledComponents,
       } = this.props;
 
@@ -60,30 +61,65 @@ class D3Map extends React.Component {
 
       const {
         BREAKPOINTS,
+        colorsPalette,
         mediaQueries,
       } = stylingConstants;
 
-
       const bp = BREAKPOINTS;
-      const { mediaMax } = mediaQueries; 
 
       this.StyledMap = styled.div` 
-      flex-grow: 1;
-      position: relative;
+        flex-grow: 1;
+        position: relative;
 
-      ${mediaQueries.mediaMax(bp.SM.max, `
-        height: 45vh;
-      `)}
-
-      ${({ isRidingOpen }) => (isRidingOpen ? `
         ${mediaQueries.mediaMax(bp.SM.max, `
-          background-image:  linear-gradient(rgba(0, 0, 0, 0) 75%, rgba(0, 0, 0, 0.04) 100%);
+          height: 45vh;
         `)}
-      ` : '')}
-    `;
 
-      // TODO: Ajouter le reste du EditMode (les fonctions qui me permettent de get X et Y, ...)
-      if (props.isEditMode) {
+        ${({ isRidingOpen }) => (isRidingOpen ? `
+          ${mediaQueries.mediaMax(bp.SM.max, `
+            background-image:  linear-gradient(rgba(0, 0, 0, 0) 75%, rgba(0, 0, 0, 0.04) 100%);
+          `)}
+        ` : '')}
+      `;
+
+      this.StyledButtonsContainer = styled.div`
+        bottom: 20px;
+        position: absolute;
+        z-index: 10;
+
+        ${mediaQueries.mediaMax(bp.XS.max, `
+          right: 20px;
+        `)}
+        ${mediaQueries.mediaMin(bp.SM.min, `
+          left: 20px;
+        `)}
+
+        button {
+          display: block;
+        }
+
+        .svg-icon {
+          fill: ${colorsPalette.colorsDx.black}
+        }
+      `;
+
+      this.StyledZoomingButtonsContainer = styled.div`
+        margin-bottom: 20px;
+
+        .e-button {
+          &:first-child {
+            border-bottom-left-radius: 0;
+            border-bottom-right-radius: 0;
+          }
+
+          &:last-child {
+            border-top-left-radius: 0;
+            border-top-right-radius: 0;
+          }
+        }
+      `
+
+      if (typeof window !== 'undefined' && props.isEditMode) {
         window.D3ElectoralMap = window.D3ElectoralMap || {};
         window.D3ElectoralMap[props.mapId] = this;
       }
@@ -145,7 +181,7 @@ class D3Map extends React.Component {
         allRidings,
         e6nHardcodedRidingIdFix,
       } = this.props;
-  
+
       const riding = allRidings ? allRidings[featureId + e6nHardcodedRidingIdFix] : null;
 
       if (riding) {
@@ -268,13 +304,18 @@ class D3Map extends React.Component {
   
     zoomToInitialSize() {
       const {
+        electionId,
         setCurrentRiding: setCurrentRidingThroughMap,
         E6N_PAGE_IDS
       } = this.props;
       this.svg.transition().duration(750).call(this.zoomTransform, window.d3.zoomIdentity);
       if (setCurrentRidingThroughMap) {
-        setCurrentRidingThroughMap(-1, (E6N_PAGE_IDS && E6N_PAGE_IDS.lists ? E6N_PAGE_IDS.lists: null));
+        setCurrentRidingThroughMap(electionId, -1, (E6N_PAGE_IDS && E6N_PAGE_IDS.lists ? E6N_PAGE_IDS.lists: null));
       }
+      this.setState({
+        disableZoomIn: false,
+        disableZoomOut: true
+      });
     }
 
     zoomEnd() {
@@ -295,11 +336,13 @@ class D3Map extends React.Component {
         },
         currentZoom: window.d3.event.transform.k
       });
+      this.enableZoomButtons(window.d3.event.transform.k);
     };
   
     loadMaps(mapDOMId) {
       const {
         cornersCoordinates,
+        electionId,
         setCurrentRiding: setCurrentRidingThroughMap,
         mapData,
         mapDOMContextId,
@@ -382,26 +425,28 @@ class D3Map extends React.Component {
   
       const handleMouseOver = (d, i) => {
         const {
+          electionId,
           setCurrentRidingTooltip: setCurrentRidingTooltipAction,
         } = this.props;
         
         if (setCurrentRidingTooltipAction) {
           const htmlNode = document.getElementsByTagName('html');
           if (window.innerWidth >= this.mediumThreshold && htmlNode && htmlNode[0] && (htmlNode[0].className.indexOf('ipad') < 0 || htmlNode[0].className.indexOf('tablet') < 0)) {
-            setCurrentRidingTooltipAction(d.properties.EDNumber20 ? d.properties.EDNumber20 : i + e6nHardcodedRidingIdFix);
+            setCurrentRidingTooltipAction({ id: electionId, data: d.properties.EDNumber20 ? d.properties.EDNumber20 : i + e6nHardcodedRidingIdFix});
           }
         }
       };
   
       const handleMouseOut = () => {
         const {
+          electionId,
           setCurrentRidingTooltip: setCurrentRidingTooltipAction,
         } = this.props;
         
         if (setCurrentRidingTooltipAction) {
           const htmlNode = document.getElementsByTagName('html');
           if (window.innerWidth >= this.mediumThreshold && htmlNode && htmlNode[0] && (htmlNode[0].className.indexOf('ipad') < 0 || htmlNode[0].className.indexOf('tablet') < 0)) {
-            setCurrentRidingTooltipAction(-1);
+            setCurrentRidingTooltipAction({ id: electionId, data:-1});
           }
         }
       };
@@ -424,7 +469,7 @@ class D3Map extends React.Component {
           .attr('id', (data) => data.properties.EDNumber20)
           .on('click', (polygon) => {
             if (setCurrentRidingThroughMap) {
-              setCurrentRidingThroughMap(polygon.properties.EDNumber20 + e6nHardcodedRidingIdFix, (E6N_PAGE_IDS && E6N_PAGE_IDS.lists ? E6N_PAGE_IDS.lists: null));
+              setCurrentRidingThroughMap(electionId, polygon.properties.EDNumber20 + e6nHardcodedRidingIdFix, (E6N_PAGE_IDS && E6N_PAGE_IDS.lists ? E6N_PAGE_IDS.lists: null));
             }
           })
           .on('mouseover', handleMouseOver)
@@ -448,8 +493,10 @@ class D3Map extends React.Component {
         const desiredScale = this.roundUpNextPowerOfTwo(currentZoom ? currentZoom : 1);
         this.svg.transition()
           .duration(400)
-          .call(this.zoom.scaleTo, desiredScale);
-        this.allowZoomButtonsWhileTransitioning = true;
+          .call(this.zoom.scaleTo, desiredScale)
+          .on("end", () =>{
+            this.allowZoomButtonsWhileTransitioning = true;
+          });
       }
     }
 
@@ -467,70 +514,84 @@ class D3Map extends React.Component {
         const desiredScale = this.roundDownNextPowerOfTwo(currentZoom-1 ? currentZoom-1 : 1);
         this.svg.transition()
           .duration(400)
-          .call(this.zoom.scaleTo, desiredScale);
-        this.allowZoomButtonsWhileTransitioning = true;
+          .call(this.zoom.scaleTo, desiredScale)
+          .on("end", () =>{
+            this.allowZoomButtonsWhileTransitioning = true;
+          } );
+        
       }
     }
 
     roundDownNextPowerOfTwo(currentZoom) {
+      if (currentZoom === 2) return this.enableZoomButtons(1);
       const {
         mapData
       } = this.props;
 
-      let power;
+      let power = 0;
       for (let i = 1; i < mapData.zoomMax; i++) {
         power = Math.pow(2, i);
         if (power > currentZoom) {
           if (power <= this.minimalZoom) {
-            this.disableZoomOut = true; 
+            return this.enableZoomButtons(this.minimalZoom);
           }
-          this.disableZoomOut = false;
-          return power/2; 
+          return this.enableZoomButtons(power/2); 
         }
       }
     }
 
     roundUpNextPowerOfTwo(currentZoom) {
-      if (currentZoom === 1) return 2;
+      if (currentZoom === 1) return this.enableZoomButtons(2);
 
       const {
         mapData
       } = this.props;
 
-      let power;
+      let power = 0;
       for (let i = 1; i < mapData.zoomMax; i++) {
         power = Math.pow(2, i);
         if (power > currentZoom) {
           if (power >= mapData.zoomMax) {
-            this.disableZoomIn = true; 
-            return mapData.zoomMax;
+            return this.enableZoomButtons(mapData.zoomMax);
           }
-          this.disableZoomIn = false;
-          return power; 
+          return this.enableZoomButtons(power);
         }
       }
-
     }
 
-    /*
-    
-    À l'intention de Véronique Leclerc
+    enableZoomButtons(futureZoom) {
+      const {
+        mapData
+      } = this.props;
 
-    Salut Vero! La composante est prete a recevoir le bouton zoomIn et zoomOut.
+      let disableZoomIn = false;
+      let disableZoomOut = false;
 
-    2 petites infos.
-      La fonctionnalité des boutons se nomme this.incrementZoom et this.decrementZoom;
-      La variable qui dit aux boutons de se griser se nomme this.disableZoomIn et this.disableZoomOut
+      if (futureZoom >= mapData.zoomMax ){
+        disableZoomIn = true;
+      } else {
+        disableZoomIn = false;
+      }
+      
+      if (futureZoom <= this.minimalZoom) {
+        disableZoomOut = true; 
+      } else {
+        disableZoomOut = false;
+      }
 
-                <button style={LeStylingMagnifique} onClick={this.incrementZoom}>
-                  MAUDIT BEAU BOUTON PLUS
-                </button>
+      this.setState({
+        disableZoomIn: disableZoomIn,
+        disableZoomOut: disableZoomOut
+      });
 
-    */ 
+      return futureZoom;
+    }
 
     render() {
       const {
         isReady,
+        currentPan,
+        currentZoom,
       } = this.state;
   
       const {
@@ -543,17 +604,18 @@ class D3Map extends React.Component {
         E6N_PAGE_IDS,
         E6NToolTip,
         forwardMapRef,
-        isEditMode,
         isRidingOpen,
         mapDOMContextId,
         mapId,
         styledComponents,
-        ZoomOutButton,
+        Button,
       } = this.props;
   
       if (!isReady) return (null);
 
       const StyledMap = this.StyledMap;
+      const StyledButtonsContainer = this.StyledButtonsContainer;
+      const StyledZoomingButtonsContainer= this.StyledZoomingButtonsContainer;
 
       if (StyledMap) {
         return (
@@ -569,19 +631,46 @@ class D3Map extends React.Component {
               E6NToolTip && (
                 <E6NToolTip
                   forwardTooltipRef={this.childTooltipRef}
+                  electionId={electionId}
                 />
               )
             }
             {
-              ZoomOutButton && (
-                <D3MapZoomButton
-                  ZoomOutButton={ZoomOutButton}
-                  onClick={this.zoomToInitialSize}
-                  currentPan={this.state.currentPan}
-                  currentZoom={this.state.currentZoom}
-                  styledComponents={styledComponents}
-                  stylingConstants={stylingConstants}
-                />
+              Button && (
+                <StyledButtonsContainer>
+                  <StyledZoomingButtonsContainer>
+                    <Button
+                      icon="svg-min_plus"
+                      isDisabled={this.state.disableZoomIn}
+                      isIconFlag
+                      onClick={this.incrementZoom}
+                      scope="secondary"
+                      type="button"
+                      title="Zoom avant"
+                      label="Zoom avant"
+                    />
+                    <Button
+                      icon="svg-min_minus"
+                      isDisabled={this.state.disableZoomOut}
+                      isIconFlag
+                      onClick={this.decrementZoom}
+                      scope="secondary"
+                      type="button"
+                      title="Zoom arrière"
+                      label="Zoom arrière"
+                    />
+                  </StyledZoomingButtonsContainer>
+                  <Button
+                    icon="svg-zoomout"
+                    isIconFlag
+                    onClick={this.zoomToInitialSize}
+                    scope="secondary"
+                    type="button"
+                    title="Réinitialiser"
+                    label="Réinitialiser"
+                    isDisabled={!(currentZoom > zoomThresholds.Z ||(currentPan && (Math.abs(currentPan.transformX) > zoomThresholds.X || Math.abs(currentPan.transformY) > zoomThresholds.Y)))}
+                  />
+                </StyledButtonsContainer>
               )
             }
             <D3MapRenderer
@@ -601,7 +690,8 @@ class D3Map extends React.Component {
           </StyledMap>
         );
       }
-      return <div/>
+
+      return null;
     }
   }
 

@@ -64,7 +64,7 @@ module.exports =
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 8);
+/******/ 	return __webpack_require__(__webpack_require__.s = 7);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -75,9 +75,9 @@ module.exports =
 /* WEBPACK VAR INJECTION */(function(process) {
 
 if (process.env.NODE_ENV === 'production') {
-  module.exports = __webpack_require__(15);
-} else {
   module.exports = __webpack_require__(14);
+} else {
+  module.exports = __webpack_require__(13);
 }
 
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
@@ -395,7 +395,7 @@ var React = __webpack_require__(0);
 
 var Component = __webpack_require__(0);
 
-var D3MapRendererModule = __webpack_require__(7);
+var D3MapRendererModule = __webpack_require__(6);
 
 var D3MapRenderer =
 /*#__PURE__*/
@@ -489,114 +489,13 @@ module.exports = D3MapRenderer;
 /* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
-function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
-
-function _templateObject() {
-  var data = _taggedTemplateLiteral(["\n      bottom: 20px;\n      left: 20px;\n      position: absolute;\n      z-index: 10;\n  \n      .svg-icon {\n        fill: ", "\n      }\n    "]);
-
-  _templateObject = function _templateObject() {
-    return data;
-  };
-
-  return data;
-}
-
-function _taggedTemplateLiteral(strings, raw) { if (!raw) { raw = strings.slice(0); } return Object.freeze(Object.defineProperties(strings, { raw: { value: Object.freeze(raw) } })); }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
-
-function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
-
-function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
-
-function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
-
-function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
-
-var React = __webpack_require__(0);
-
-var Component = __webpack_require__(0);
-
-var thresholds = {
-  X: 50,
-  Y: 50,
-  Z: 1
-};
-
-var D3MapZoomButton =
-/*#__PURE__*/
-function (_React$Component) {
-  _inherits(D3MapZoomButton, _React$Component);
-
-  function D3MapZoomButton(props) {
-    var _this;
-
-    _classCallCheck(this, D3MapZoomButton);
-
-    _this = _possibleConstructorReturn(this, _getPrototypeOf(D3MapZoomButton).call(this, props));
-    _this.StyledResetButton = null;
-    return _this;
-  }
-
-  _createClass(D3MapZoomButton, [{
-    key: "componentDidMount",
-    value: function componentDidMount() {
-      var _this$props = this.props,
-          ZoomOutButton = _this$props.ZoomOutButton,
-          styledComponents = _this$props.styledComponents,
-          stylingConstants = _this$props.stylingConstants;
-      var styled = styledComponents.styled,
-          css = styledComponents.css;
-      var colorsPalette = stylingConstants.colorsPalette;
-      var colorsDx = colorsPalette.colorsDx;
-      this.StyledResetButton = styled(ZoomOutButton)(_templateObject(), colorsDx.black);
-    }
-  }, {
-    key: "render",
-    value: function render() {
-      var _this$props2 = this.props,
-          ZoomOutButton = _this$props2.ZoomOutButton,
-          currentPan = _this$props2.currentPan,
-          onClick = _this$props2.onClick,
-          currentZoom = _this$props2.currentZoom;
-      var StyledResetButton = this.StyledResetButton;
-
-      if (currentZoom > thresholds.Z || currentPan && (Math.abs(currentPan.transformX) > thresholds.X || Math.abs(currentPan.transformY) > thresholds.Y)) {
-        return React.createElement(StyledResetButton, {
-          icon: "svg-zoomout",
-          isIconFlag: true,
-          onClick: onClick,
-          scope: "secondary",
-          type: "button"
-        });
-      }
-
-      return null;
-    }
-  }]);
-
-  return D3MapZoomButton;
-}(React.Component);
-
-module.exports = D3MapZoomButton;
-
-/***/ }),
-/* 5 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var _require = __webpack_require__(9),
+var _require = __webpack_require__(8),
     BREAKPOINTS = _require.BREAKPOINTS;
 
-var _require2 = __webpack_require__(10),
+var _require2 = __webpack_require__(9),
     colorsPalette = _require2.colorsPalette;
 
-var _require3 = __webpack_require__(11),
+var _require3 = __webpack_require__(10),
     mediaQueries = _require3.mediaQueries;
 
 module.exports = {
@@ -606,7 +505,7 @@ module.exports = {
 };
 
 /***/ }),
-/* 6 */
+/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
@@ -723,7 +622,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
 
 
 /***/ }),
-/* 7 */
+/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -873,7 +772,7 @@ function (_React$Component) {
 module.exports = D3MapRendererModule;
 
 /***/ }),
-/* 8 */
+/* 7 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -884,8 +783,28 @@ function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try
 
 function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
 
+function _templateObject3() {
+  var data = _taggedTemplateLiteral(["\n        margin-bottom: 20px;\n\n        .e-button {\n          &:first-child {\n            border-bottom-left-radius: 0;\n            border-bottom-right-radius: 0;\n          }\n\n          &:last-child {\n            border-top-left-radius: 0;\n            border-top-right-radius: 0;\n          }\n        }\n      "]);
+
+  _templateObject3 = function _templateObject3() {
+    return data;
+  };
+
+  return data;
+}
+
+function _templateObject2() {
+  var data = _taggedTemplateLiteral(["\n        bottom: 20px;\n        position: absolute;\n        z-index: 10;\n\n        ", "\n        ", "\n\n        button {\n          display: block;\n        }\n\n        .svg-icon {\n          fill: ", "\n        }\n      "]);
+
+  _templateObject2 = function _templateObject2() {
+    return data;
+  };
+
+  return data;
+}
+
 function _templateObject() {
-  var data = _taggedTemplateLiteral([" \n      flex-grow: 1;\n      position: relative;\n\n      ", "\n\n      ", "\n    "]);
+  var data = _taggedTemplateLiteral([" \n        flex-grow: 1;\n        position: relative;\n\n        ", "\n\n        ", "\n      "]);
 
   _templateObject = function _templateObject() {
     return data;
@@ -914,15 +833,17 @@ function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || func
 
 var React = __webpack_require__(0);
 
-var Component = __webpack_require__(0);
+var stylingConstants = __webpack_require__(4);
 
-var stylingConstants = __webpack_require__(5);
-
-var classNames = __webpack_require__(6);
+var classNames = __webpack_require__(5);
 
 var D3MapRenderer = __webpack_require__(3);
 
-var D3MapZoomButton = __webpack_require__(4);
+var zoomThresholds = {
+  X: 50,
+  Y: 50,
+  Z: 1
+};
 
 var D3Map =
 /*#__PURE__*/
@@ -941,7 +862,9 @@ function (_React$Component) {
         transformX: 0,
         transformY: 0
       },
-      currentZoom: 1
+      currentZoom: 1,
+      disableZoomOut: true,
+      disableZoomIn: false
     };
     _this.minimalZoom = 1;
     _this.mediumThreshold = 1024;
@@ -958,31 +881,29 @@ function (_React$Component) {
     _this.zoomEnd = _this.zoomEnd.bind(_assertThisInitialized(_this));
     _this.roundUpNextPowerOfTwo = _this.roundUpNextPowerOfTwo.bind(_assertThisInitialized(_this));
     _this.roundDownNextPowerOfTwo = _this.roundDownNextPowerOfTwo.bind(_assertThisInitialized(_this));
-    _this.disableZoomOut = false;
-    _this.disableZoomIn = false;
     _this.decrementZoom = _this.decrementZoom.bind(_assertThisInitialized(_this));
     _this.incrementZoom = _this.incrementZoom.bind(_assertThisInitialized(_this));
     _this.zoomToInitialSize = _this.zoomToInitialSize.bind(_assertThisInitialized(_this));
     _this.loadMaps = _this.loadMaps.bind(_assertThisInitialized(_this));
     _this.GetCornerCoordinates = _this.GetCornerCoordinates.bind(_assertThisInitialized(_this));
     _this.getVisibleArea = _this.getVisibleArea.bind(_assertThisInitialized(_this));
-    _this.latestTransform = null;
     _this.allowZoomButtonsWhileTransitioning = true;
+    _this.latestTransform = null;
     _this.childTooltipRef = React.createRef();
-    var _this$props = _this.props,
-        isRidingOpen = _this$props.isRidingOpen,
-        styledComponents = _this$props.styledComponents;
+    var styledComponents = _this.props.styledComponents;
     var styled = styledComponents.styled;
     var BREAKPOINTS = stylingConstants.BREAKPOINTS,
+        colorsPalette = stylingConstants.colorsPalette,
         mediaQueries = stylingConstants.mediaQueries;
     var bp = BREAKPOINTS;
-    var mediaMax = mediaQueries.mediaMax;
-    _this.StyledMap = styled.div(_templateObject(), mediaQueries.mediaMax(bp.SM.max, "\n        height: 45vh;\n      "), function (_ref) {
+    _this.StyledMap = styled.div(_templateObject(), mediaQueries.mediaMax(bp.SM.max, "\n          height: 45vh;\n        "), function (_ref) {
       var isRidingOpen = _ref.isRidingOpen;
-      return isRidingOpen ? "\n        ".concat(mediaQueries.mediaMax(bp.SM.max, "\n          background-image:  linear-gradient(rgba(0, 0, 0, 0) 75%, rgba(0, 0, 0, 0.04) 100%);\n        "), "\n      ") : '';
-    }); // TODO: Ajouter le reste du EditMode (les fonctions qui me permettent de get X et Y, ...)
+      return isRidingOpen ? "\n          ".concat(mediaQueries.mediaMax(bp.SM.max, "\n            background-image:  linear-gradient(rgba(0, 0, 0, 0) 75%, rgba(0, 0, 0, 0.04) 100%);\n          "), "\n        ") : '';
+    });
+    _this.StyledButtonsContainer = styled.div(_templateObject2(), mediaQueries.mediaMax(bp.XS.max, "\n          right: 20px;\n        "), mediaQueries.mediaMin(bp.SM.min, "\n          left: 20px;\n        "), colorsPalette.colorsDx.black);
+    _this.StyledZoomingButtonsContainer = styled.div(_templateObject3());
 
-    if (props.isEditMode) {
+    if (typeof window !== 'undefined' && props.isEditMode) {
       window.D3ElectoralMap = window.D3ElectoralMap || {};
       window.D3ElectoralMap[props.mapId] = _assertThisInitialized(_this);
     }
@@ -1073,9 +994,9 @@ function (_React$Component) {
   }, {
     key: "fillRidingsWithLeadingPartyColor",
     value: function fillRidingsWithLeadingPartyColor(featureId) {
-      var _this$props2 = this.props,
-          allRidings = _this$props2.allRidings,
-          e6nHardcodedRidingIdFix = _this$props2.e6nHardcodedRidingIdFix;
+      var _this$props = this.props,
+          allRidings = _this$props.allRidings,
+          e6nHardcodedRidingIdFix = _this$props.e6nHardcodedRidingIdFix;
       var riding = allRidings ? allRidings[featureId + e6nHardcodedRidingIdFix] : null;
 
       if (riding) {
@@ -1187,14 +1108,20 @@ function (_React$Component) {
   }, {
     key: "zoomToInitialSize",
     value: function zoomToInitialSize() {
-      var _this$props3 = this.props,
-          setCurrentRidingThroughMap = _this$props3.setCurrentRiding,
-          E6N_PAGE_IDS = _this$props3.E6N_PAGE_IDS;
+      var _this$props2 = this.props,
+          electionId = _this$props2.electionId,
+          setCurrentRidingThroughMap = _this$props2.setCurrentRiding,
+          E6N_PAGE_IDS = _this$props2.E6N_PAGE_IDS;
       this.svg.transition().duration(750).call(this.zoomTransform, window.d3.zoomIdentity);
 
       if (setCurrentRidingThroughMap) {
-        setCurrentRidingThroughMap(-1, E6N_PAGE_IDS && E6N_PAGE_IDS.lists ? E6N_PAGE_IDS.lists : null);
+        setCurrentRidingThroughMap(electionId, -1, E6N_PAGE_IDS && E6N_PAGE_IDS.lists ? E6N_PAGE_IDS.lists : null);
       }
+
+      this.setState({
+        disableZoomIn: false,
+        disableZoomOut: true
+      });
     }
   }, {
     key: "zoomEnd",
@@ -1216,20 +1143,22 @@ function (_React$Component) {
         },
         currentZoom: window.d3.event.transform.k
       });
+      this.enableZoomButtons(window.d3.event.transform.k);
     }
   }, {
     key: "loadMaps",
     value: function loadMaps(mapDOMId) {
       var _this3 = this;
 
-      var _this$props4 = this.props,
-          cornersCoordinates = _this$props4.cornersCoordinates,
-          setCurrentRidingThroughMap = _this$props4.setCurrentRiding,
-          mapData = _this$props4.mapData,
-          mapDOMContextId = _this$props4.mapDOMContextId,
-          mapId = _this$props4.mapId,
-          e6nHardcodedRidingIdFix = _this$props4.e6nHardcodedRidingIdFix,
-          E6N_PAGE_IDS = _this$props4.E6N_PAGE_IDS;
+      var _this$props3 = this.props,
+          cornersCoordinates = _this$props3.cornersCoordinates,
+          electionId = _this$props3.electionId,
+          setCurrentRidingThroughMap = _this$props3.setCurrentRiding,
+          mapData = _this$props3.mapData,
+          mapDOMContextId = _this$props3.mapDOMContextId,
+          mapId = _this$props3.mapId,
+          e6nHardcodedRidingIdFix = _this$props3.e6nHardcodedRidingIdFix,
+          E6N_PAGE_IDS = _this$props3.E6N_PAGE_IDS;
       var mapSearchSection = document.getElementById(mapId);
       var relativeInitialScale = mapSearchSection.clientHeight * mapData.initialProjectionScale;
 
@@ -1285,25 +1214,35 @@ function (_React$Component) {
       };
 
       var handleMouseOver = function handleMouseOver(d, i) {
-        var setCurrentRidingTooltipAction = _this3.props.setCurrentRidingTooltip;
+        var _this3$props = _this3.props,
+            electionId = _this3$props.electionId,
+            setCurrentRidingTooltipAction = _this3$props.setCurrentRidingTooltip;
 
         if (setCurrentRidingTooltipAction) {
           var htmlNode = document.getElementsByTagName('html');
 
           if (window.innerWidth >= _this3.mediumThreshold && htmlNode && htmlNode[0] && (htmlNode[0].className.indexOf('ipad') < 0 || htmlNode[0].className.indexOf('tablet') < 0)) {
-            setCurrentRidingTooltipAction(d.properties.EDNumber20 ? d.properties.EDNumber20 : i + e6nHardcodedRidingIdFix);
+            setCurrentRidingTooltipAction({
+              id: electionId,
+              data: d.properties.EDNumber20 ? d.properties.EDNumber20 : i + e6nHardcodedRidingIdFix
+            });
           }
         }
       };
 
       var handleMouseOut = function handleMouseOut() {
-        var setCurrentRidingTooltipAction = _this3.props.setCurrentRidingTooltip;
+        var _this3$props2 = _this3.props,
+            electionId = _this3$props2.electionId,
+            setCurrentRidingTooltipAction = _this3$props2.setCurrentRidingTooltip;
 
         if (setCurrentRidingTooltipAction) {
           var htmlNode = document.getElementsByTagName('html');
 
           if (window.innerWidth >= _this3.mediumThreshold && htmlNode && htmlNode[0] && (htmlNode[0].className.indexOf('ipad') < 0 || htmlNode[0].className.indexOf('tablet') < 0)) {
-            setCurrentRidingTooltipAction(-1);
+            setCurrentRidingTooltipAction({
+              id: electionId,
+              data: -1
+            });
           }
         }
       }; // Déplacer ce code dans le componentDidUpdate avec un check sur le mapData.mapUrl changed.
@@ -1323,7 +1262,7 @@ function (_React$Component) {
           return data.properties.EDNumber20;
         }).on('click', function (polygon) {
           if (setCurrentRidingThroughMap) {
-            setCurrentRidingThroughMap(polygon.properties.EDNumber20 + e6nHardcodedRidingIdFix, E6N_PAGE_IDS && E6N_PAGE_IDS.lists ? E6N_PAGE_IDS.lists : null);
+            setCurrentRidingThroughMap(electionId, polygon.properties.EDNumber20 + e6nHardcodedRidingIdFix, E6N_PAGE_IDS && E6N_PAGE_IDS.lists ? E6N_PAGE_IDS.lists : null);
           }
         }).on('mouseover', handleMouseOver).on('mouseout', handleMouseOut);
 
@@ -1333,104 +1272,125 @@ function (_React$Component) {
   }, {
     key: "incrementZoom",
     value: function incrementZoom() {
+      var _this4 = this;
+
       var allowZoom = this.props.allowZoom;
       var currentZoom = this.state.currentZoom;
 
       if (allowZoom && this.allowZoomButtonsWhileTransitioning) {
         this.allowZoomButtonsWhileTransitioning = false;
         var desiredScale = this.roundUpNextPowerOfTwo(currentZoom ? currentZoom : 1);
-        this.svg.transition().duration(400).call(this.zoom.scaleTo, desiredScale);
-        this.allowZoomButtonsWhileTransitioning = true;
+        this.svg.transition().duration(400).call(this.zoom.scaleTo, desiredScale).on("end", function () {
+          _this4.allowZoomButtonsWhileTransitioning = true;
+        });
       }
     }
   }, {
     key: "decrementZoom",
     value: function decrementZoom() {
+      var _this5 = this;
+
       var allowZoom = this.props.allowZoom;
       var currentZoom = this.state.currentZoom;
 
       if (allowZoom && this.allowZoomButtonsWhileTransitioning) {
         this.allowZoomButtonsWhileTransitioning = false;
         var desiredScale = this.roundDownNextPowerOfTwo(currentZoom - 1 ? currentZoom - 1 : 1);
-        this.svg.transition().duration(400).call(this.zoom.scaleTo, desiredScale);
-        this.allowZoomButtonsWhileTransitioning = true;
+        this.svg.transition().duration(400).call(this.zoom.scaleTo, desiredScale).on("end", function () {
+          _this5.allowZoomButtonsWhileTransitioning = true;
+        });
       }
     }
   }, {
     key: "roundDownNextPowerOfTwo",
     value: function roundDownNextPowerOfTwo(currentZoom) {
+      if (currentZoom === 2) return this.enableZoomButtons(1);
       var mapData = this.props.mapData;
-      var power;
+      var power = 0;
 
       for (var i = 1; i < mapData.zoomMax; i++) {
         power = Math.pow(2, i);
 
         if (power > currentZoom) {
           if (power <= this.minimalZoom) {
-            this.disableZoomOut = true;
+            return this.enableZoomButtons(this.minimalZoom);
           }
 
-          this.disableZoomOut = false;
-          return power / 2;
+          return this.enableZoomButtons(power / 2);
         }
       }
     }
   }, {
     key: "roundUpNextPowerOfTwo",
     value: function roundUpNextPowerOfTwo(currentZoom) {
-      if (currentZoom === 1) return 2;
+      if (currentZoom === 1) return this.enableZoomButtons(2);
       var mapData = this.props.mapData;
-      var power;
+      var power = 0;
 
       for (var i = 1; i < mapData.zoomMax; i++) {
         power = Math.pow(2, i);
 
         if (power > currentZoom) {
           if (power >= mapData.zoomMax) {
-            this.disableZoomIn = true;
-            return mapData.zoomMax;
+            return this.enableZoomButtons(mapData.zoomMax);
           }
 
-          this.disableZoomIn = false;
-          return power;
+          return this.enableZoomButtons(power);
         }
       }
     }
-    /*
-    
-    À l'intention de Véronique Leclerc
-     Salut Vero! La composante est prete a recevoir le bouton zoomIn et zoomOut.
-     2 petites infos.
-      La fonctionnalité des boutons se nomme this.incrementZoom et this.decrementZoom;
-      La variable qui dit aux boutons de se griser se nomme this.disableZoomIn et this.disableZoomOut
-                 <button style={LeStylingMagnifique} onClick={this.incrementZoom}>
-                  MAUDIT BEAU BOUTON PLUS
-                </button>
-     */
+  }, {
+    key: "enableZoomButtons",
+    value: function enableZoomButtons(futureZoom) {
+      var mapData = this.props.mapData;
+      var disableZoomIn = false;
+      var disableZoomOut = false;
 
+      if (futureZoom >= mapData.zoomMax) {
+        disableZoomIn = true;
+      } else {
+        disableZoomIn = false;
+      }
+
+      if (futureZoom <= this.minimalZoom) {
+        disableZoomOut = true;
+      } else {
+        disableZoomOut = false;
+      }
+
+      this.setState({
+        disableZoomIn: disableZoomIn,
+        disableZoomOut: disableZoomOut
+      });
+      return futureZoom;
+    }
   }, {
     key: "render",
     value: function render() {
-      var _this4 = this;
+      var _this6 = this;
 
-      var isReady = this.state.isReady;
-      var _this$props5 = this.props,
-          allParties = _this$props5.allParties,
-          allowClick = _this$props5.allowClick,
-          currentRidingId = _this$props5.currentRidingId,
-          electionId = _this$props5.electionId,
-          e6nHardcodedRidingIdFix = _this$props5.e6nHardcodedRidingIdFix,
-          E6N_PAGE_IDS = _this$props5.E6N_PAGE_IDS,
-          E6NToolTip = _this$props5.E6NToolTip,
-          forwardMapRef = _this$props5.forwardMapRef,
-          isEditMode = _this$props5.isEditMode,
-          isRidingOpen = _this$props5.isRidingOpen,
-          mapDOMContextId = _this$props5.mapDOMContextId,
-          mapId = _this$props5.mapId,
-          styledComponents = _this$props5.styledComponents,
-          ZoomOutButton = _this$props5.ZoomOutButton;
+      var _this$state = this.state,
+          isReady = _this$state.isReady,
+          currentPan = _this$state.currentPan,
+          currentZoom = _this$state.currentZoom;
+      var _this$props4 = this.props,
+          allParties = _this$props4.allParties,
+          allowClick = _this$props4.allowClick,
+          currentRidingId = _this$props4.currentRidingId,
+          electionId = _this$props4.electionId,
+          e6nHardcodedRidingIdFix = _this$props4.e6nHardcodedRidingIdFix,
+          E6N_PAGE_IDS = _this$props4.E6N_PAGE_IDS,
+          E6NToolTip = _this$props4.E6NToolTip,
+          forwardMapRef = _this$props4.forwardMapRef,
+          isRidingOpen = _this$props4.isRidingOpen,
+          mapDOMContextId = _this$props4.mapDOMContextId,
+          mapId = _this$props4.mapId,
+          styledComponents = _this$props4.styledComponents,
+          Button = _this$props4.Button;
       if (!isReady) return null;
       var StyledMap = this.StyledMap;
+      var StyledButtonsContainer = this.StyledButtonsContainer;
+      var StyledZoomingButtonsContainer = this.StyledZoomingButtonsContainer;
 
       if (StyledMap) {
         return React.createElement(StyledMap, {
@@ -1439,22 +1399,43 @@ function (_React$Component) {
           ref: forwardMapRef,
           id: mapId
         }, E6NToolTip && React.createElement(E6NToolTip, {
-          forwardTooltipRef: this.childTooltipRef
-        }), ZoomOutButton && React.createElement(D3MapZoomButton, {
-          ZoomOutButton: ZoomOutButton,
+          forwardTooltipRef: this.childTooltipRef,
+          electionId: electionId
+        }), Button && React.createElement(StyledButtonsContainer, null, React.createElement(StyledZoomingButtonsContainer, null, React.createElement(Button, {
+          icon: "svg-min_plus",
+          isDisabled: this.state.disableZoomIn,
+          isIconFlag: true,
+          onClick: this.incrementZoom,
+          scope: "secondary",
+          type: "button",
+          title: "Zoom avant",
+          label: "Zoom avant"
+        }), React.createElement(Button, {
+          icon: "svg-min_minus",
+          isDisabled: this.state.disableZoomOut,
+          isIconFlag: true,
+          onClick: this.decrementZoom,
+          scope: "secondary",
+          type: "button",
+          title: "Zoom arri\xE8re",
+          label: "Zoom arri\xE8re"
+        })), React.createElement(Button, {
+          icon: "svg-zoomout",
+          isIconFlag: true,
           onClick: this.zoomToInitialSize,
-          currentPan: this.state.currentPan,
-          currentZoom: this.state.currentZoom,
-          styledComponents: styledComponents,
-          stylingConstants: stylingConstants
-        }), React.createElement(D3MapRenderer, {
+          scope: "secondary",
+          type: "button",
+          title: "R\xE9initialiser",
+          label: "R\xE9initialiser",
+          isDisabled: !(currentZoom > zoomThresholds.Z || currentPan && (Math.abs(currentPan.transformX) > zoomThresholds.X || Math.abs(currentPan.transformY) > zoomThresholds.Y))
+        })), React.createElement(D3MapRenderer, {
           allowClick: allowClick,
           allParties: allParties,
           electionId: electionId,
           currentRidingId: currentRidingId,
           initializeMap: this.loadMaps,
           onMouseMove: function onMouseMove(event) {
-            return _this4.onMouseMove(event);
+            return _this6.onMouseMove(event);
           },
           focusRiding: this.focusOnRiding,
           e6nHardcodedRidingIdFix: e6nHardcodedRidingIdFix,
@@ -1465,7 +1446,7 @@ function (_React$Component) {
         }));
       }
 
-      return React.createElement("div", null);
+      return null;
     }
   }]);
 
@@ -1475,7 +1456,7 @@ function (_React$Component) {
 /* harmony default export */ __webpack_exports__["default"] = (D3Map);
 
 /***/ }),
-/* 9 */
+/* 8 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1537,7 +1518,7 @@ var VIEWPORT_BREAKPOINT_NAMES = {
 };
 
 /***/ }),
-/* 10 */
+/* 9 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1631,7 +1612,7 @@ var colorsPalette = {
 };
 
 /***/ }),
-/* 11 */
+/* 10 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1656,7 +1637,7 @@ var mediaQueries = {
 };
 
 /***/ }),
-/* 12 */
+/* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1672,7 +1653,7 @@ var mediaQueries = {
 var printWarning = function() {};
 
 if (process.env.NODE_ENV !== 'production') {
-  var ReactPropTypesSecret = __webpack_require__(13);
+  var ReactPropTypesSecret = __webpack_require__(12);
   var loggedTypeFailures = {};
   var has = Function.call.bind(Object.prototype.hasOwnProperty);
 
@@ -1766,7 +1747,7 @@ module.exports = checkPropTypes;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 13 */
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1785,7 +1766,7 @@ module.exports = ReactPropTypesSecret;
 
 
 /***/ }),
-/* 14 */
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1807,7 +1788,7 @@ if (process.env.NODE_ENV !== "production") {
 'use strict';
 
 var _assign = __webpack_require__(2);
-var checkPropTypes = __webpack_require__(12);
+var checkPropTypes = __webpack_require__(11);
 
 // TODO: this is special because it gets imported during build.
 
@@ -3694,7 +3675,7 @@ module.exports = react;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 15 */
+/* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
