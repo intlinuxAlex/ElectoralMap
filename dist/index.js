@@ -1376,6 +1376,7 @@ function (_React$Component) {
       var _this$props4 = this.props,
           allParties = _this$props4.allParties,
           allowClick = _this$props4.allowClick,
+          className = _this$props4.className,
           currentRidingId = _this$props4.currentRidingId,
           electionId = _this$props4.electionId,
           e6nHardcodedRidingIdFix = _this$props4.e6nHardcodedRidingIdFix,
@@ -1395,6 +1396,7 @@ function (_React$Component) {
       if (StyledMap) {
         return React.createElement(StyledMap, {
           "aria-hidden": true,
+          className: className,
           isRidingOpen: isRidingOpen,
           ref: forwardMapRef,
           id: mapId
