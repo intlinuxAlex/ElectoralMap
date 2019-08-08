@@ -536,6 +536,7 @@ class D3Map extends React.Component {
       const {
         allParties,
         allowClick,
+        className,
         currentRidingId,
         electionId,
         e6nHardcodedRidingIdFix,
@@ -558,6 +559,7 @@ class D3Map extends React.Component {
         return (
           <StyledMap
             aria-hidden
+            className={className}
             isRidingOpen={isRidingOpen}
             ref={forwardMapRef}
             id={mapId}
