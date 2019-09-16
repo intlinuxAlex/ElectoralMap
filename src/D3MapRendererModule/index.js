@@ -28,17 +28,11 @@ class D3MapRendererModule extends React.Component {
     const { colorsDx, colorsUi } = colorsPalette;
 
     StyledSvg = styled.svg`
-    background-color: ${colorsDx.white};
-    display: block;
-    fill : ${colorsUi.lightgrey};
-    overflow: hidden;
-    position: absolute;
-    min-height: 300px;
-  
-  
-    ${mediaMax(bp.SM.max, `
-      max-height: 50vh;
-    `)}
+      background-color: ${colorsDx.white};
+      display: block;
+      fill : ${colorsUi.lightgrey};
+      overflow: hidden;
+      position: absolute;
   
     path {
       cursor: pointer !important;
