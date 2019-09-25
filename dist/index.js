@@ -64,7 +64,7 @@ module.exports =
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 7);
+/******/ 	return __webpack_require__(__webpack_require__.s = 8);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -75,9 +75,9 @@ module.exports =
 /* WEBPACK VAR INJECTION */(function(process) {
 
 if (process.env.NODE_ENV === 'production') {
-  module.exports = __webpack_require__(14);
+  module.exports = __webpack_require__(15);
 } else {
-  module.exports = __webpack_require__(13);
+  module.exports = __webpack_require__(14);
 }
 
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
@@ -395,7 +395,7 @@ var React = __webpack_require__(0);
 
 var Component = __webpack_require__(0);
 
-var D3MapRendererModule = __webpack_require__(6);
+var D3MapRendererModule = __webpack_require__(7);
 
 var D3MapRenderer =
 /*#__PURE__*/
@@ -415,12 +415,13 @@ function (_React$Component) {
           allowClick = _this$props.allowClick,
           focusRiding = _this$props.focusRiding,
           currentRidingId = _this$props.currentRidingId,
-          e6nHardcodedRidingIdFix = _this$props.e6nHardcodedRidingIdFix;
+          e6nHardcodedRidingIdFix = _this$props.e6nHardcodedRidingIdFix,
+          mapDOMContextId = _this$props.mapDOMContextId;
       var currentId = null;
       var feature = null;
 
       if (currentRidingId && currentRidingId > -1 && currentRidingId !== prevProps.currentRidingId) {
-        var paths = window.d3.selectAll('path'); // eslint-disable-next-line no-underscore-dangle
+        var paths = window.d3.select("#".concat(mapDOMContextId)).selectAll('path'); // eslint-disable-next-line no-underscore-dangle
 
         for (var i = 0; i < paths._groups[0].length; i += 1) {
           // eslint-disable-next-line no-underscore-dangle
@@ -487,15 +488,86 @@ module.exports = D3MapRenderer;
 
 /***/ }),
 /* 4 */
+/***/ (function(module, exports) {
+
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
+
+function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
+
+var isWaiting = null;
+var waiters = [];
+var waitIntervalId = null;
+
+function waitD3MapScript(_x) {
+  return _waitD3MapScript.apply(this, arguments);
+}
+
+function _waitD3MapScript() {
+  _waitD3MapScript = _asyncToGenerator(
+  /*#__PURE__*/
+  regeneratorRuntime.mark(function _callee(src) {
+    return regeneratorRuntime.wrap(function _callee$(_context) {
+      while (1) {
+        switch (_context.prev = _context.next) {
+          case 0:
+            return _context.abrupt("return", new Promise(function (resolve) {
+              if (window.d3) {
+                resolve();
+              } else {
+                waiters.push(resolve);
+
+                if (!waitIntervalId) {
+                  waitIntervalId = setInterval(function () {
+                    d3IsLoaded();
+                  }, 100);
+                }
+
+                if (!isWaiting) {
+                  isWaiting = true;
+                  loadScript(src);
+                }
+              }
+            }));
+
+          case 1:
+          case "end":
+            return _context.stop();
+        }
+      }
+    }, _callee);
+  }));
+  return _waitD3MapScript.apply(this, arguments);
+}
+
+function d3IsLoaded() {
+  if (window.d3) {
+    waiters.forEach(function (w) {
+      return w();
+    });
+    clearInterval(waitIntervalId);
+  }
+}
+
+function loadScript(src) {
+  console.log('AAAA', 'load src');
+  var s = document.createElement('script');
+  s.src = src;
+  document.head.appendChild(s);
+}
+
+module.exports = waitD3MapScript;
+
+/***/ }),
+/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var _require = __webpack_require__(8),
+var _require = __webpack_require__(9),
     BREAKPOINTS = _require.BREAKPOINTS;
 
-var _require2 = __webpack_require__(9),
+var _require2 = __webpack_require__(10),
     colorsPalette = _require2.colorsPalette;
 
-var _require3 = __webpack_require__(10),
+var _require3 = __webpack_require__(11),
     mediaQueries = _require3.mediaQueries;
 
 module.exports = {
@@ -505,7 +577,7 @@ module.exports = {
 };
 
 /***/ }),
-/* 5 */
+/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
@@ -622,7 +694,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
 
 
 /***/ }),
-/* 6 */
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -772,16 +844,12 @@ function (_React$Component) {
 module.exports = D3MapRendererModule;
 
 /***/ }),
-/* 7 */
+/* 8 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
-
-function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
-
-function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
 
 function _templateObject3() {
   var data = _taggedTemplateLiteral(["\n        margin-bottom: 20px;\n\n        .e-button {\n          &:first-child {\n            border-bottom-left-radius: 0;\n            border-bottom-right-radius: 0;\n          }\n\n          &:last-child {\n            border-top-left-radius: 0;\n            border-top-right-radius: 0;\n          }\n        }\n      "]);
@@ -833,11 +901,13 @@ function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || func
 
 var React = __webpack_require__(0);
 
-var stylingConstants = __webpack_require__(4);
+var stylingConstants = __webpack_require__(5);
 
-var classNames = __webpack_require__(5);
+var classNames = __webpack_require__(6);
 
 var D3MapRenderer = __webpack_require__(3);
+
+var waitD3MapScript = __webpack_require__(4);
 
 var zoomThresholds = {
   X: 50,
@@ -917,40 +987,26 @@ function (_React$Component) {
       var _this2 = this;
 
       var d3SourceScript = this.props.d3SourceScript;
+      /* Fix potentiel de Martin Marquis Bouba
+      (async () => {
+        if (!window.d3) {
+          const tmpFn = window.define;
+          window.define = undefined;
+          await this.loadScript(d3SourceScript);
+          window.define = tmpFn;
+        }
+        this.setState({ isReady: true });
+      })();*/
 
-      _asyncToGenerator(
-      /*#__PURE__*/
-      regeneratorRuntime.mark(function _callee() {
-        var tmpFn;
-        return regeneratorRuntime.wrap(function _callee$(_context) {
-          while (1) {
-            switch (_context.prev = _context.next) {
-              case 0:
-                if (window.d3) {
-                  _context.next = 6;
-                  break;
-                }
+      waitD3MapScript(d3SourceScript).then(function () {
+        console.log('AAAA', 'd3Loader READY');
 
-                tmpFn = window.define;
-                window.define = undefined;
-                _context.next = 5;
-                return _this2.loadScript(d3SourceScript);
+        _this2.setState({
+          isReady: true
+        });
 
-              case 5:
-                window.define = tmpFn;
-
-              case 6:
-                _this2.setState({
-                  isReady: true
-                });
-
-              case 7:
-              case "end":
-                return _context.stop();
-            }
-          }
-        }, _callee);
-      }))();
+        window.blockZoomTransitions = false;
+      });
     }
   }, {
     key: "componentDidUpdate",
@@ -971,6 +1027,14 @@ function (_React$Component) {
           }
         }
       }
+    }
+  }, {
+    key: "shouldComponentUpdate",
+    value: function shouldComponentUpdate(nextState) {
+      console.log("DANS shouldComponentUpdate: Ton window.blockZoomTransitions : ", window.blockZoomTransitions);
+      if (window.blockZoomTransitions) return false; // bouba single
+
+      return true;
     }
   }, {
     key: "loadScript",
@@ -1012,9 +1076,15 @@ function (_React$Component) {
   }, {
     key: "focusOnRiding",
     value: function focusOnRiding(feature, id) {
-      var mapData = this.props.mapData;
-      var featureId = id;
-      var featureGroup = window.d3.selectAll('path'); // eslint-disable-next-line no-underscore-dangle
+      var _this$props2 = this.props,
+          mapData = _this$props2.mapData,
+          electionId = _this$props2.electionId,
+          fragmentId = _this$props2.fragmentId,
+          isWidget = _this$props2.isWidget,
+          mapDOMContextId = _this$props2.mapDOMContextId;
+      var featureId = id; //const featureGroup = window.d3.selectAll('path'); bouba martin marquis fix
+
+      var featureGroup = window.d3.select("#".concat(mapDOMContextId)).selectAll('path'); // eslint-disable-next-line no-underscore-dangle
 
       for (var k = 0; k < featureGroup._groups[0].length; k += 1) {
         // eslint-disable-next-line no-underscore-dangle
@@ -1039,14 +1109,17 @@ function (_React$Component) {
       var x = (bounds[0][0] + bounds[1][0]) / 2;
       var y = (bounds[0][1] + bounds[1][1]) / 2;
       var scale = Math.max(Math.min(mapData.zoomFactor / Math.max(dx / mapData.width, dy / mapData.height), mapData.zoomMax), 1);
-      var mapSearchSection = document.getElementById('search-map');
-      var widthDifferential;
+      var soughtId = isWidget ? "search-map-".concat(electionId, "-").concat(fragmentId) : 'search-map';
+      var mapSearchSection = document.getElementById(soughtId);
+      var widthDifferential = 2;
 
-      for (var m = 0; m < mapData.mapConfigurations.length; m += 1) {
-        if ((mapData.mapConfigurations[m].lowerBoundary === 0 ? true : window.innerWidth >= mapData.mapConfigurations[m].lowerBoundary) && (mapData.mapConfigurations[m].higherBoundary === 0 ? true : window.innerWidth < mapData.mapConfigurations[m].higherBoundary)) {
-          var configWidthDifferential = mapData.mapConfigurations[m].widthDifferential;
-          widthDifferential = configWidthDifferential;
-          break;
+      if (mapData.mapConfigurations) {
+        for (var m = 0; m < mapData.mapConfigurations.length; m += 1) {
+          if ((mapData.mapConfigurations[m].lowerBoundary === 0 ? true : window.innerWidth >= mapData.mapConfigurations[m].lowerBoundary) && (mapData.mapConfigurations[m].higherBoundary === 0 ? true : window.innerWidth < mapData.mapConfigurations[m].higherBoundary)) {
+            var configWidthDifferential = mapData.mapConfigurations[m].widthDifferential;
+            widthDifferential = configWidthDifferential;
+            break;
+          }
         }
       }
 
@@ -1057,7 +1130,10 @@ function (_React$Component) {
       }
 
       var translate = [mapSearchSection.clientWidth / widthDifferential - scale * x, mapSearchSection.clientHeight * 0.42 - (scale * y + heightOffset / 2)];
-      this.svg.transition().duration(750).call(this.zoom.transform, window.d3.zoomIdentity.translate(translate[0], translate[1]).scale(scale));
+      window.blockZoomTransitions = true;
+      this.svg.transition().duration(750).call(this.zoom.transform, window.d3.zoomIdentity.translate(translate[0], translate[1]).scale(scale)).on("end", function () {
+        window.blockZoomTransitions = false;
+      });
       return true;
     }
   }, {
@@ -1102,16 +1178,18 @@ function (_React$Component) {
       var allowZoom = this.props.allowZoom;
 
       if (allowZoom) {
+        window.blockZoomTransitions = true; // bouba single zoom management
+
         this.featuresGlobal.attr('transform', window.d3.event.transform).selectAll('path').style('stroke-width', "".concat(Math.max(0.01, 1 / (window.d3.event.transform.k * 2)), "px")); // updated for d3 v4
       }
     }
   }, {
     key: "zoomToInitialSize",
     value: function zoomToInitialSize() {
-      var _this$props2 = this.props,
-          electionId = _this$props2.electionId,
-          setCurrentRidingThroughMap = _this$props2.setCurrentRiding,
-          E6N_PAGE_IDS = _this$props2.E6N_PAGE_IDS;
+      var _this$props3 = this.props,
+          electionId = _this$props3.electionId,
+          setCurrentRidingThroughMap = _this$props3.setCurrentRiding,
+          E6N_PAGE_IDS = _this$props3.E6N_PAGE_IDS;
       this.svg.transition().duration(750).call(this.zoomTransform, window.d3.zoomIdentity);
 
       if (setCurrentRidingThroughMap) {
@@ -1143,22 +1221,25 @@ function (_React$Component) {
         },
         currentZoom: window.d3.event.transform.k
       });
-      this.enableZoomButtons(window.d3.event.transform.k);
+      window.blockZoomTransitions = false;
+      this.enableZoomButtons(window.d3.event.transform.k); // bouba single zoom management
+
+      console.log("DANS ZOOMEND: Ton window.blockZoomTransitions : ", window.blockZoomTransitions);
     }
   }, {
     key: "loadMaps",
     value: function loadMaps(mapDOMId) {
       var _this3 = this;
 
-      var _this$props3 = this.props,
-          cornersCoordinates = _this$props3.cornersCoordinates,
-          electionId = _this$props3.electionId,
-          setCurrentRidingThroughMap = _this$props3.setCurrentRiding,
-          mapData = _this$props3.mapData,
-          mapDOMContextId = _this$props3.mapDOMContextId,
-          mapId = _this$props3.mapId,
-          e6nHardcodedRidingIdFix = _this$props3.e6nHardcodedRidingIdFix,
-          E6N_PAGE_IDS = _this$props3.E6N_PAGE_IDS;
+      var _this$props4 = this.props,
+          cornersCoordinates = _this$props4.cornersCoordinates,
+          electionId = _this$props4.electionId,
+          setCurrentRidingThroughMap = _this$props4.setCurrentRiding,
+          mapData = _this$props4.mapData,
+          mapDOMContextId = _this$props4.mapDOMContextId,
+          mapId = _this$props4.mapId,
+          e6nHardcodedRidingIdFix = _this$props4.e6nHardcodedRidingIdFix,
+          E6N_PAGE_IDS = _this$props4.E6N_PAGE_IDS;
       var mapSearchSection = document.getElementById(mapId);
       var relativeInitialScale = mapSearchSection.clientHeight * mapData.initialProjectionScale;
 
@@ -1282,6 +1363,7 @@ function (_React$Component) {
         var desiredScale = this.roundUpNextPowerOfTwo(currentZoom ? currentZoom : 1);
         this.svg.transition().duration(400).call(this.zoom.scaleTo, desiredScale).on("end", function () {
           _this4.allowZoomButtonsWhileTransitioning = true;
+          window.blockZoomTransitions = false;
         });
       }
     }
@@ -1298,6 +1380,7 @@ function (_React$Component) {
         var desiredScale = this.roundDownNextPowerOfTwo(currentZoom - 1 ? currentZoom - 1 : 1);
         this.svg.transition().duration(400).call(this.zoom.scaleTo, desiredScale).on("end", function () {
           _this5.allowZoomButtonsWhileTransitioning = true;
+          window.blockZoomTransitions = false;
         });
       }
     }
@@ -1373,21 +1456,21 @@ function (_React$Component) {
           isReady = _this$state.isReady,
           currentPan = _this$state.currentPan,
           currentZoom = _this$state.currentZoom;
-      var _this$props4 = this.props,
-          allParties = _this$props4.allParties,
-          allowClick = _this$props4.allowClick,
-          className = _this$props4.className,
-          currentRidingId = _this$props4.currentRidingId,
-          electionId = _this$props4.electionId,
-          e6nHardcodedRidingIdFix = _this$props4.e6nHardcodedRidingIdFix,
-          E6N_PAGE_IDS = _this$props4.E6N_PAGE_IDS,
-          E6NToolTip = _this$props4.E6NToolTip,
-          forwardMapRef = _this$props4.forwardMapRef,
-          isRidingOpen = _this$props4.isRidingOpen,
-          mapDOMContextId = _this$props4.mapDOMContextId,
-          mapId = _this$props4.mapId,
-          styledComponents = _this$props4.styledComponents,
-          Button = _this$props4.Button;
+      var _this$props5 = this.props,
+          allParties = _this$props5.allParties,
+          allowClick = _this$props5.allowClick,
+          className = _this$props5.className,
+          currentRidingId = _this$props5.currentRidingId,
+          electionId = _this$props5.electionId,
+          e6nHardcodedRidingIdFix = _this$props5.e6nHardcodedRidingIdFix,
+          E6N_PAGE_IDS = _this$props5.E6N_PAGE_IDS,
+          E6NToolTip = _this$props5.E6NToolTip,
+          forwardMapRef = _this$props5.forwardMapRef,
+          isRidingOpen = _this$props5.isRidingOpen,
+          mapDOMContextId = _this$props5.mapDOMContextId,
+          mapId = _this$props5.mapId,
+          styledComponents = _this$props5.styledComponents,
+          Button = _this$props5.Button;
       if (!isReady) return null;
       var StyledMap = this.StyledMap;
       var StyledButtonsContainer = this.StyledButtonsContainer;
@@ -1458,7 +1541,7 @@ function (_React$Component) {
 /* harmony default export */ __webpack_exports__["default"] = (D3Map);
 
 /***/ }),
-/* 8 */
+/* 9 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1520,7 +1603,7 @@ var VIEWPORT_BREAKPOINT_NAMES = {
 };
 
 /***/ }),
-/* 9 */
+/* 10 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1614,7 +1697,7 @@ var colorsPalette = {
 };
 
 /***/ }),
-/* 10 */
+/* 11 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1639,7 +1722,7 @@ var mediaQueries = {
 };
 
 /***/ }),
-/* 11 */
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1655,7 +1738,7 @@ var mediaQueries = {
 var printWarning = function() {};
 
 if (process.env.NODE_ENV !== 'production') {
-  var ReactPropTypesSecret = __webpack_require__(12);
+  var ReactPropTypesSecret = __webpack_require__(13);
   var loggedTypeFailures = {};
   var has = Function.call.bind(Object.prototype.hasOwnProperty);
 
@@ -1749,7 +1832,7 @@ module.exports = checkPropTypes;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 12 */
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1768,7 +1851,7 @@ module.exports = ReactPropTypesSecret;
 
 
 /***/ }),
-/* 13 */
+/* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1790,7 +1873,7 @@ if (process.env.NODE_ENV !== "production") {
 'use strict';
 
 var _assign = __webpack_require__(2);
-var checkPropTypes = __webpack_require__(11);
+var checkPropTypes = __webpack_require__(12);
 
 // TODO: this is special because it gets imported during build.
 
@@ -3677,7 +3760,7 @@ module.exports = react;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 14 */
+/* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";

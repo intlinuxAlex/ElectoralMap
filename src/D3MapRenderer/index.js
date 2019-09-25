@@ -9,12 +9,13 @@ class D3MapRenderer extends React.Component {
       focusRiding,
       currentRidingId,
       e6nHardcodedRidingIdFix,
+      mapDOMContextId,
     } = this.props;
     let currentId = null;
     let feature = null;
 
     if (currentRidingId && currentRidingId > -1 && currentRidingId !== prevProps.currentRidingId) {
-      const paths = window.d3.selectAll('path');
+      const paths = window.d3.select(`#${mapDOMContextId}`).selectAll('path');
       // eslint-disable-next-line no-underscore-dangle
       for (let i = 0; i < paths._groups[0].length; i += 1) { // eslint-disable-next-line no-underscore-dangle
         const node = paths._groups[0][i];

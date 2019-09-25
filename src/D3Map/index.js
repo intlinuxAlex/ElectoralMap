@@ -2,6 +2,8 @@ const React = require('react');
 const stylingConstants = require('../lib/styled/stylingpackage');
 const classNames = require('classnames/dedupe');
 const D3MapRenderer = require('../D3MapRenderer');
+const waitD3MapScript = require('../lib/d3Loader');
+
 
 const zoomThresholds = {
   X: 50,
@@ -127,7 +129,7 @@ class D3Map extends React.Component {
   
     componentDidMount() {
       const { d3SourceScript } = this.props;
-
+      /* Fix potentiel de Martin Marquis Bouba
       (async () => {
         if (!window.d3) {
           const tmpFn = window.define;
@@ -136,7 +138,12 @@ class D3Map extends React.Component {
           window.define = tmpFn;
         }
         this.setState({ isReady: true });
-      })();
+      })();*/
+      waitD3MapScript(d3SourceScript).then(() => {
+        console.log('AAAA', 'd3Loader READY')
+        this.setState({ isReady: true });
+        window.blockZoomTransitions = false;
+      })
     }
   
     componentDidUpdate() {
@@ -159,6 +166,12 @@ class D3Map extends React.Component {
       }
     }
   
+    shouldComponentUpdate(nextState) {
+      console.log("DANS shouldComponentUpdate: Ton window.blockZoomTransitions : ", window.blockZoomTransitions);
+      if (window.blockZoomTransitions) return false; // bouba single
+      return true; 
+    }
+
     loadScript(src) {
       return new Promise((resolve, reject) => {
         const s = document.createElement('script');
@@ -197,11 +210,16 @@ class D3Map extends React.Component {
     focusOnRiding(feature, id) {
       const {
         mapData,
+        electionId,
+        fragmentId,
+        isWidget,
+        mapDOMContextId,
       } = this.props;
   
       const featureId = id;
   
-      const featureGroup = window.d3.selectAll('path');
+      //const featureGroup = window.d3.selectAll('path'); bouba martin marquis fix
+      const featureGroup = window.d3.select(`#${mapDOMContextId}`).selectAll('path');
       // eslint-disable-next-line no-underscore-dangle
       for (let k = 0; k < featureGroup._groups[0].length; k += 1) {
         // eslint-disable-next-line no-underscore-dangle
@@ -226,28 +244,34 @@ class D3Map extends React.Component {
       const y = (bounds[0][1] + bounds[1][1]) / 2;
   
       const scale = Math.max(Math.min(mapData.zoomFactor / Math.max(dx / mapData.width, dy / mapData.height), mapData.zoomMax), 1);
-      const mapSearchSection = document.getElementById('search-map');
+      const soughtId = isWidget ? `search-map-${electionId}-${fragmentId}` : 'search-map';
+      const mapSearchSection = document.getElementById(soughtId);
   
-      let widthDifferential;
-      for (let m = 0; m < mapData.mapConfigurations.length; m += 1) {
-        if ((mapData.mapConfigurations[m].lowerBoundary === 0 ? true : window.innerWidth >= mapData.mapConfigurations[m].lowerBoundary)
-        && (mapData.mapConfigurations[m].higherBoundary === 0 ? true : window.innerWidth < mapData.mapConfigurations[m].higherBoundary)) {
-          const configWidthDifferential = mapData.mapConfigurations[m].widthDifferential;
-          widthDifferential = configWidthDifferential;
-          break;
+      let widthDifferential = 2;
+      if (mapData.mapConfigurations) {
+        for (let m = 0; m < mapData.mapConfigurations.length; m += 1) {
+          if ((mapData.mapConfigurations[m].lowerBoundary === 0 ? true : window.innerWidth >= mapData.mapConfigurations[m].lowerBoundary)
+          && (mapData.mapConfigurations[m].higherBoundary === 0 ? true : window.innerWidth < mapData.mapConfigurations[m].higherBoundary)) {
+            const configWidthDifferential = mapData.mapConfigurations[m].widthDifferential;
+            widthDifferential = configWidthDifferential;
+            break;
+          }
         }
       }
-  
+
       let heightOffset = 1;
       if (window.innerWidth < this.mediumThreshold && document.getElementsByClassName('m-riding-results-card') && document.getElementsByClassName('m-riding-results-card')[0] && document.getElementsByClassName('m-riding-results-card')[0].offsetHeight) {
         heightOffset = document.getElementsByClassName('m-riding-results-card')[0].offsetHeight;
       }
       const translate = [mapSearchSection.clientWidth / widthDifferential - ((scale * x)), mapSearchSection.clientHeight * 0.42 - ((scale * y) + heightOffset / 2)];
   
+      window.blockZoomTransitions = true;
       this.svg.transition()
         .duration(750)
-        .call(this.zoom.transform, window.d3.zoomIdentity.translate(translate[0], translate[1]).scale(scale));
-  
+        .call(this.zoom.transform, window.d3.zoomIdentity.translate(translate[0], translate[1]).scale(scale))
+        .on("end", () => {
+          window.blockZoomTransitions = false;
+        });  
       return true;
     }
 
@@ -296,6 +320,7 @@ class D3Map extends React.Component {
 
       
       if (allowZoom) {
+        window.blockZoomTransitions = true; // bouba single zoom management
         this.featuresGlobal
           .attr('transform', window.d3.event.transform)
           .selectAll('path').style('stroke-width', `${Math.max(0.01, 1 / (window.d3.event.transform.k * 2))}px`); // updated for d3 v4
@@ -336,7 +361,10 @@ class D3Map extends React.Component {
         },
         currentZoom: window.d3.event.transform.k
       });
+      window.blockZoomTransitions = false;
       this.enableZoomButtons(window.d3.event.transform.k);
+      // bouba single zoom management
+      console.log("DANS ZOOMEND: Ton window.blockZoomTransitions : ", window.blockZoomTransitions);
     };
   
     loadMaps(mapDOMId) {
@@ -496,6 +524,7 @@ class D3Map extends React.Component {
           .call(this.zoom.scaleTo, desiredScale)
           .on("end", () =>{
             this.allowZoomButtonsWhileTransitioning = true;
+            window.blockZoomTransitions = false;
           });
       }
     }
@@ -517,6 +546,7 @@ class D3Map extends React.Component {
           .call(this.zoom.scaleTo, desiredScale)
           .on("end", () =>{
             this.allowZoomButtonsWhileTransitioning = true;
+            window.blockZoomTransitions = false;
           } );
         
       }
