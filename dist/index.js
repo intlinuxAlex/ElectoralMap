@@ -648,7 +648,7 @@ function _templateObject2() {
 }
 
 function _templateObject() {
-  var data = _taggedTemplateLiteral(["\n      background-color: ", ";\n      display: block;\n      fill : ", ";\n      overflow: hidden;\n      position: absolute;\n  \n    path {\n      cursor: pointer !important;\n      stroke: white;\n      stroke-width: 0.5px;\n      -webkit-backface-visibility;\n    }\n  \n    ", "\n  \n    .flash-it {\n      animation-duration: 1666ms;\n      animation-fill-mode: both;\n      animation-iteration-count: 3;\n      animation-name: flash;\n      animation-play-state: running;\n      animation-timing-function: ease-in-out;\n      background-color: ", ";\n      opacity: .6;\n    }\n  \n    @keyframes flash {\n      0% {opacity: .6;}\n      50% {opacity: 1;}\n      100% {opacity: .6;}\n    }\n  \n    path:hover,\n    path.highlighted {\n        fill-opacity: .6;\n    }\n  \n    .mobile & path:hover,\n    .mobile & path.highlighted,\n    .ios & path:hover,\n    .ios & path.highlighted,\n    .android & path:hover,\n    .android & path.highlighted {\n        fill-opacity: 1;\n    }\n  "]);
+  var data = _taggedTemplateLiteral(["\n      display: block;\n      fill : ", ";\n      overflow: hidden;\n      position: absolute;\n  \n    path {\n      cursor: pointer !important;\n      stroke: white;\n      stroke-width: 0.5px;\n      -webkit-backface-visibility;\n    }\n  \n    ", "\n  \n    .flash-it {\n      animation-duration: 1666ms;\n      animation-fill-mode: both;\n      animation-iteration-count: 3;\n      animation-name: flash;\n      animation-play-state: running;\n      animation-timing-function: ease-in-out;\n      background-color: ", ";\n      opacity: .6;\n    }\n  \n    @keyframes flash {\n      0% {opacity: .6;}\n      50% {opacity: 1;}\n      100% {opacity: .6;}\n    }\n  \n    path:hover,\n    path.highlighted {\n        fill-opacity: .6;\n    }\n  \n    .mobile & path:hover,\n    .mobile & path.highlighted,\n    .ios & path:hover,\n    .ios & path.highlighted,\n    .android & path:hover,\n    .android & path.highlighted {\n        fill-opacity: 1;\n    }\n  "]);
 
   _templateObject = function _templateObject() {
     return data;
@@ -705,7 +705,7 @@ function (_React$Component) {
     var mediaMax = mediaQueries.mediaMax;
     var colorsDx = colorsPalette.colorsDx,
         colorsUi = colorsPalette.colorsUi;
-    StyledSvg = styled.svg(_templateObject(), colorsDx.white, colorsUi.lightgrey, function (_ref) {
+    StyledSvg = styled.svg(_templateObject(), colorsUi.lightgrey, function (_ref) {
       var partyColors = _ref.partyColors;
 
       if (partyColors) {

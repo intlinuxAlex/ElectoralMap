@@ -28,7 +28,6 @@ class D3MapRendererModule extends React.Component {
     const { colorsDx, colorsUi } = colorsPalette;
 
     StyledSvg = styled.svg`
-      background-color: ${colorsDx.white};
       display: block;
       fill : ${colorsUi.lightgrey};
       overflow: hidden;
