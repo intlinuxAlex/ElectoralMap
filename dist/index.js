@@ -822,6 +822,7 @@ function (_React$Component) {
           onMouseMove = _this$props4.onMouseMove,
           mapDOMContextId = _this$props4.mapDOMContextId,
           partyColors = _this$props4.partyColors;
+      console.log("Ton mapDOMContextId dans D3MapRendererModule: ", mapDOMContextId);
       return React.createElement(React.Fragment, null, React.createElement(StyledCanvas, {
         height: "4",
         width: "3"
@@ -927,6 +928,7 @@ function (_React$Component) {
 
     _this = _possibleConstructorReturn(this, _getPrototypeOf(D3Map).call(this, props));
     _this.state = {
+      id: _this.props.electionId,
       isReady: false,
       currentPan: {
         transformX: 0,
@@ -1012,7 +1014,8 @@ function (_React$Component) {
     key: "componentDidUpdate",
     value: function componentDidUpdate() {
       if (this.featuresGlobal) {
-        // eslint-disable-next-line no-underscore-dangle
+        console.log("Ton state dans componentDidUpdate: ", this.state); // eslint-disable-next-line no-underscore-dangle
+
         var childNodes = this.featuresGlobal._groups[0][0].childNodes;
 
         for (var i = 0; i < childNodes.length; i += 1) {
@@ -1195,11 +1198,20 @@ function (_React$Component) {
       if (setCurrentRidingThroughMap) {
         setCurrentRidingThroughMap(electionId, -1, E6N_PAGE_IDS && E6N_PAGE_IDS.lists ? E6N_PAGE_IDS.lists : null);
       }
-
+      /* boubasetstate
       this.setState({
         disableZoomIn: false,
         disableZoomOut: true
-      });
+      });*/
+
+
+      var varNameZoomIn = "".concat(electionId, "-zoomIn"); // boubasetstate enleve ca
+
+      var varNameZoomOut = "".concat(electionId, "-zoomOut"); // boubasetstate enleve ca
+
+      window.varNameZoomIn = false; // boubasetstate enleve ca
+
+      window.varNameZoomOut = true; // boubasetstate enleve ca
     }
   }, {
     key: "zoomEnd",
@@ -1241,6 +1253,7 @@ function (_React$Component) {
           e6nHardcodedRidingIdFix = _this$props4.e6nHardcodedRidingIdFix,
           E6N_PAGE_IDS = _this$props4.E6N_PAGE_IDS;
       var mapSearchSection = document.getElementById(mapId);
+      console.log("Ton mapSearchSection: ", mapSearchSection);
       var relativeInitialScale = mapSearchSection.clientHeight * mapData.initialProjectionScale;
 
       if (mapData.initialScalingConfigurations) {
@@ -1253,6 +1266,8 @@ function (_React$Component) {
         }
       }
 
+      console.log("Ton state dans loadMaps: ", this.state);
+      console.log("Ton electionId dans loadMaps: ", electionId);
       var rotationConfigurations = mapData.rotationConfigurations;
       var rotations = {
         x: rotationConfigurations ? rotationConfigurations.x : 0,
@@ -1282,7 +1297,8 @@ function (_React$Component) {
 
       this.path = window.d3.geoPath().projection(this.projection); // Create an SVG
 
-      this.svg = window.d3.select("#".concat(mapDOMId)).attr('width', '100%').attr('height', '100%'); // Group for the map features
+      this.svg = window.d3.select("#".concat(mapDOMId)).attr('width', '100%').attr('height', '100%');
+      console.log("Ton svg dans LoadMaps: ", this.svg); // Group for the map features
 
       this.featuresGlobal = this.svg.append('g').attr('class', 'features'); // Create zoom/pan listener
       // Change [1,Infinity] to adjust the min/max zoom scale
@@ -1347,8 +1363,10 @@ function (_React$Component) {
           }
         }).on('mouseover', handleMouseOver).on('mouseout', handleMouseOut);
 
+        console.log("Ton featuresGlobal dans loadMaps :", _this3.featuresGlobal);
         _this3.zoomTransform = _this3.zoom.transform;
       });
+      console.log("Ton featuresGlobal dans loadMaps APRES call ajax :", this.featuresGlobal);
     }
   }, {
     key: "incrementZoom",
@@ -1425,7 +1443,9 @@ function (_React$Component) {
   }, {
     key: "enableZoomButtons",
     value: function enableZoomButtons(futureZoom) {
-      var mapData = this.props.mapData;
+      var _this$props5 = this.props,
+          mapData = _this$props5.mapData,
+          electionId = _this$props5.electionId;
       var disableZoomIn = false;
       var disableZoomOut = false;
 
@@ -1441,10 +1461,22 @@ function (_React$Component) {
         disableZoomOut = false;
       }
 
+      console.log("Ton state dans enableZoomButtons: ", this.state);
+      /*
       this.setState({
         disableZoomIn: disableZoomIn,
         disableZoomOut: disableZoomOut
       });
+      */
+
+      var varNameZoomIn = "".concat(electionId, "-zoomIn"); // boubasetstate enleve ca
+
+      var varNameZoomOut = "".concat(electionId, "-zoomOut"); // boubasetstate enleve ca
+
+      window.varNameZoomIn = disableZoomIn; // boubasetstate enleve ca
+
+      window.varNameZoomOut = disableZoomOut; // boubasetstate enleve ca
+
       return futureZoom;
     }
   }, {
@@ -1456,25 +1488,30 @@ function (_React$Component) {
           isReady = _this$state.isReady,
           currentPan = _this$state.currentPan,
           currentZoom = _this$state.currentZoom;
-      var _this$props5 = this.props,
-          allParties = _this$props5.allParties,
-          allowClick = _this$props5.allowClick,
-          className = _this$props5.className,
-          currentRidingId = _this$props5.currentRidingId,
-          electionId = _this$props5.electionId,
-          e6nHardcodedRidingIdFix = _this$props5.e6nHardcodedRidingIdFix,
-          E6N_PAGE_IDS = _this$props5.E6N_PAGE_IDS,
-          E6NToolTip = _this$props5.E6NToolTip,
-          forwardMapRef = _this$props5.forwardMapRef,
-          isRidingOpen = _this$props5.isRidingOpen,
-          mapDOMContextId = _this$props5.mapDOMContextId,
-          mapId = _this$props5.mapId,
-          styledComponents = _this$props5.styledComponents,
-          Button = _this$props5.Button;
+      var _this$props6 = this.props,
+          allParties = _this$props6.allParties,
+          allowClick = _this$props6.allowClick,
+          className = _this$props6.className,
+          currentRidingId = _this$props6.currentRidingId,
+          electionId = _this$props6.electionId,
+          e6nHardcodedRidingIdFix = _this$props6.e6nHardcodedRidingIdFix,
+          E6N_PAGE_IDS = _this$props6.E6N_PAGE_IDS,
+          E6NToolTip = _this$props6.E6NToolTip,
+          forwardMapRef = _this$props6.forwardMapRef,
+          isRidingOpen = _this$props6.isRidingOpen,
+          mapDOMContextId = _this$props6.mapDOMContextId,
+          mapId = _this$props6.mapId,
+          styledComponents = _this$props6.styledComponents,
+          Button = _this$props6.Button;
       if (!isReady) return null;
       var StyledMap = this.StyledMap;
       var StyledButtonsContainer = this.StyledButtonsContainer;
       var StyledZoomingButtonsContainer = this.StyledZoomingButtonsContainer;
+      var varNameZoomIn = "".concat(electionId, "-zoomIn"); // boubasetstate enleve ca
+
+      var varNameZoomOut = "".concat(electionId, "-zoomOut"); // boubasetstate enleve ca
+      //window.varNameZoomIn = disableZoomIn; // boubasetstate enleve ca
+      //window.varNameZoomOut = disableZoomOut; // boubasetstate enleve ca
 
       if (StyledMap) {
         return React.createElement(StyledMap, {
@@ -1487,8 +1524,10 @@ function (_React$Component) {
           forwardTooltipRef: this.childTooltipRef,
           electionId: electionId
         }), Button && React.createElement(StyledButtonsContainer, null, React.createElement(StyledZoomingButtonsContainer, null, React.createElement(Button, {
-          icon: "svg-min_plus",
-          isDisabled: this.state.disableZoomIn,
+          icon: "svg-min_plus" //isDisabled={this.state.disableZoomIn} boubasetstate remets ca
+          ,
+          isDisabled: window.varNameZoomIn // boubasetstate enleve ca
+          ,
           isIconFlag: true,
           onClick: this.incrementZoom,
           scope: "secondary",
@@ -1496,8 +1535,10 @@ function (_React$Component) {
           title: "Zoom avant",
           label: "Zoom avant"
         }), React.createElement(Button, {
-          icon: "svg-min_minus",
-          isDisabled: this.state.disableZoomOut,
+          icon: "svg-min_minus" //isDisabled={this.state.disableZoomOut} boubasetstate remets ca
+          ,
+          isDisabled: window.varNameZoomOut // boubasetstate enleve ca
+          ,
           isIconFlag: true,
           onClick: this.decrementZoom,
           scope: "secondary",

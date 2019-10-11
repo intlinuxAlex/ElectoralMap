@@ -16,6 +16,7 @@ class D3Map extends React.Component {
       super(props);
   
       this.state = {
+        id: this.props.electionId,
         isReady: false,
         currentPan: {
           transformX: 0,
@@ -148,6 +149,7 @@ class D3Map extends React.Component {
   
     componentDidUpdate() {
       if (this.featuresGlobal) {
+        console.log("Ton state dans componentDidUpdate: ", this.state);
         // eslint-disable-next-line no-underscore-dangle
         const { childNodes } = this.featuresGlobal._groups[0][0];
   
@@ -337,10 +339,18 @@ class D3Map extends React.Component {
       if (setCurrentRidingThroughMap) {
         setCurrentRidingThroughMap(electionId, -1, (E6N_PAGE_IDS && E6N_PAGE_IDS.lists ? E6N_PAGE_IDS.lists: null));
       }
+
+      /* boubasetstate
       this.setState({
         disableZoomIn: false,
         disableZoomOut: true
-      });
+      });*/
+      let varNameZoomIn = `${electionId}-zoomIn`; // boubasetstate enleve ca
+      let varNameZoomOut = `${electionId}-zoomOut`; // boubasetstate enleve ca
+      window.varNameZoomIn = false; // boubasetstate enleve ca
+      window.varNameZoomOut = true; // boubasetstate enleve ca
+      
+
     }
 
     zoomEnd() {
@@ -380,6 +390,7 @@ class D3Map extends React.Component {
       } = this.props;
   
       const mapSearchSection = document.getElementById(mapId);
+      console.log("Ton mapSearchSection: ", mapSearchSection);
       let relativeInitialScale = mapSearchSection.clientHeight * mapData.initialProjectionScale;
   
       if (mapData.initialScalingConfigurations) {
@@ -393,6 +404,8 @@ class D3Map extends React.Component {
         }
       }
   
+      console.log("Ton state dans loadMaps: ", this.state);
+      console.log("Ton electionId dans loadMaps: ", electionId);
       const { rotationConfigurations } = mapData;
       const rotations = {
         x: rotationConfigurations ? rotationConfigurations.x : 0,
@@ -430,11 +443,13 @@ class D3Map extends React.Component {
       this.path = window.d3.geoPath()
         .projection(this.projection);
   
+      
       // Create an SVG
       this.svg = window.d3.select(`#${mapDOMId}`)
         .attr('width', '100%')
         .attr('height', '100%');
   
+      console.log("Ton svg dans LoadMaps: ", this.svg);
       // Group for the map features
       this.featuresGlobal = this.svg.append('g')
         .attr('class', 'features');
@@ -503,8 +518,10 @@ class D3Map extends React.Component {
           .on('mouseover', handleMouseOver)
           .on('mouseout', handleMouseOut);
 
+        console.log("Ton featuresGlobal dans loadMaps :", this.featuresGlobal);
         this.zoomTransform = this.zoom.transform;
       });
+      console.log("Ton featuresGlobal dans loadMaps APRES call ajax :", this.featuresGlobal);
     }
   
     incrementZoom() { 
@@ -591,7 +608,8 @@ class D3Map extends React.Component {
 
     enableZoomButtons(futureZoom) {
       const {
-        mapData
+        mapData,
+        electionId, // boubasetstate enleve ca.
       } = this.props;
 
       let disableZoomIn = false;
@@ -609,10 +627,17 @@ class D3Map extends React.Component {
         disableZoomOut = false;
       }
 
+      console.log("Ton state dans enableZoomButtons: ", this.state);
+      /*
       this.setState({
         disableZoomIn: disableZoomIn,
         disableZoomOut: disableZoomOut
       });
+      */
+      let varNameZoomIn = `${electionId}-zoomIn`; // boubasetstate enleve ca
+      let varNameZoomOut = `${electionId}-zoomOut`; // boubasetstate enleve ca
+      window.varNameZoomIn = disableZoomIn; // boubasetstate enleve ca
+      window.varNameZoomOut = disableZoomOut; // boubasetstate enleve ca
 
       return futureZoom;
     }
@@ -647,6 +672,12 @@ class D3Map extends React.Component {
       const StyledButtonsContainer = this.StyledButtonsContainer;
       const StyledZoomingButtonsContainer= this.StyledZoomingButtonsContainer;
 
+      let varNameZoomIn = `${electionId}-zoomIn`; // boubasetstate enleve ca
+      let varNameZoomOut = `${electionId}-zoomOut`; // boubasetstate enleve ca
+      //window.varNameZoomIn = disableZoomIn; // boubasetstate enleve ca
+      //window.varNameZoomOut = disableZoomOut; // boubasetstate enleve ca
+
+      
       if (StyledMap) {
         return (
           <StyledMap
@@ -671,7 +702,8 @@ class D3Map extends React.Component {
                   <StyledZoomingButtonsContainer>
                     <Button
                       icon="svg-min_plus"
-                      isDisabled={this.state.disableZoomIn}
+                      //isDisabled={this.state.disableZoomIn} boubasetstate remets ca
+                      isDisabled={window.varNameZoomIn} // boubasetstate enleve ca
                       isIconFlag
                       onClick={this.incrementZoom}
                       scope="secondary"
@@ -681,7 +713,8 @@ class D3Map extends React.Component {
                     />
                     <Button
                       icon="svg-min_minus"
-                      isDisabled={this.state.disableZoomOut}
+                      //isDisabled={this.state.disableZoomOut} boubasetstate remets ca
+                      isDisabled={window.varNameZoomOut} // boubasetstate enleve ca
                       isIconFlag
                       onClick={this.decrementZoom}
                       scope="secondary"

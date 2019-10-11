@@ -120,6 +120,7 @@ class D3MapRendererModule extends React.Component {
       partyColors,
     } = this.props;
 
+    console.log("Ton mapDOMContextId dans D3MapRendererModule: ", mapDOMContextId);
     return (
       <>
         <StyledCanvas
