@@ -35,9 +35,14 @@ class D3MapRendererModule extends React.Component {
   
     path {
       cursor: pointer !important;
-      stroke: white;
+      stroke: #fff;
+      stroke-linecap: butt;
+      stroke-linejoin: miter;
       stroke-width: 0.5px;
       -webkit-backface-visibility;
+      ${mediaQueries.mediaMax(bp.SM.max, `
+        stroke-width: 0.05px;
+      `)}
     }
   
     ${({ partyColors }) => {

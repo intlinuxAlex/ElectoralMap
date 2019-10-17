@@ -298,7 +298,7 @@ class D3Map extends React.Component {
       if (allowZoom) {
         this.featuresGlobal
           .attr('transform', window.d3.event.transform)
-          .selectAll('path').style('stroke-width', `${Math.max(0.01, 1 / (window.d3.event.transform.k * 2))}px`); // updated for d3 v4
+          .selectAll('path').style('stroke-width', `${1 / (window.d3.event.transform.k * 6)}px`); // updated for d3 v4
       }
     }
   
@@ -327,7 +327,7 @@ class D3Map extends React.Component {
         window.d3.event.transform.k = 1;
       }
 
-      this.featuresGlobal.selectAll('path').style('stroke-width', `${Math.max(0.01, 1 / (window.d3.event.transform.k * 2))}px`);
+      this.featuresGlobal.selectAll('path').style('stroke-width', `${1 / (window.d3.event.transform.k * 6)}px`);
 
       this.setState({
         currentPan:{
@@ -488,7 +488,7 @@ class D3Map extends React.Component {
         currentZoom,
       } = this.state;
 
-      if (allowZoom && this.allowZoomButtonsWhileTransitioning) {
+      if (this.allowZoomButtonsWhileTransitioning) {
         this.allowZoomButtonsWhileTransitioning = false;
         const desiredScale = this.roundUpNextPowerOfTwo(currentZoom ? currentZoom : 1);
         this.svg.transition()
@@ -509,7 +509,7 @@ class D3Map extends React.Component {
         currentZoom,
       } = this.state;
 
-      if (allowZoom && this.allowZoomButtonsWhileTransitioning) {
+      if (this.allowZoomButtonsWhileTransitioning) {
         this.allowZoomButtonsWhileTransitioning = false;
         const desiredScale = this.roundDownNextPowerOfTwo(currentZoom-1 ? currentZoom-1 : 1);
         this.svg.transition()
