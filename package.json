@@ -14,7 +14,7 @@
     "classnames": "^2.2.6",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
-    "webpack": "^2.7.0"
+    "webpack": "^5.75.0"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
